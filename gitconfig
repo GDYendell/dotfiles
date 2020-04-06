@@ -1,0 +1,63 @@
+[user]
+	name = Gary Yendell
+	email = gary.yendell@diamond.ac.uk
+[color]
+        diff = auto
+        status = auto
+        branch = auto
+        interactive = auto
+        ui = true
+        pager = true
+[rerere]
+	enabled = true
+[alias]
+	cp = cherry-pick
+	cpab = cherry-pick --abort
+	mg = merge
+	mgab = merge --abort
+	ch = checkout
+	rb = rebase -i
+	rbct = rebase --continue
+	rbab = rebase --abort
+	cleanall = clean -df
+	rsth = reset --hard
+	rsts = reset --soft
+	aliases = config --get-regexp alias
+	st = status
+	alias = "!f() { source ~/.bashrc_local; GIT_ALIAS \"$@\"; }; f"
+	stashes = stash list
+	prev = log -1
+	remprun = remote prune
+	cm = commit -m
+	cmam = commit --amend
+	fecha = fetch --all
+	delbr = branch -D
+	rst = reset
+	cmdf = cherry -v --abbrev=10 HEAD
+	track = branch -u
+	uncommit = reset HEAD~
+	addch = add -u
+	renamebr = branch -m
+	cpct = cherry-pick --continue
+	prevdiff = show HEAD
+	tmp = commit -m 'Temp'
+	refs = reflog -10
+	graph = log --oneline --graph
+	log = log --stat
+	stashname = stash save
+	branches = branch -al
+	remotes = remote -v
+	rbsk = rebase --skip
+	prev5 = log -5
+	recommit = commit -C HEAD@{1}
+	redcommit = commit -c HEAD@{1}
+	logol = log --oneline --decorate
+	taglog = "!f() { source ~/.bashrc_local; GIT_TAG_LOG; }; f"
+	logt = log --decorate
+	staged = diff --cached
+	has = branch --contains
+	cmamn = commit --amend --no-edit
+	logadog = log --all --decorate --oneline --graph
+	trace = "!f() { source ~/.bashrc_local; GIT_TRACE \"$@\"; }; f"
+	stashk = stash --keep-index
+	diff2 = diff --word-diff=color
