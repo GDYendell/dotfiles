@@ -38,8 +38,8 @@ function opacity()
 
 # Git Formatting
 # source /home/mef65357/bin/oh-my-git/prompt.sh
-source ~/bin/git-completion-2-11.bash
-source ~/bin/git-prompt-2-11.sh
+source ./git-completion.bash
+source ./git-prompt.sh
 export GIT_PS1_SHOWDIRTYSTATE=1 # '*' -> Unstaged Changes, '+' -> Staged Changes
 export GIT_PS1_SHOWSTASHSTATE=1 # '$' -> Something Stashed
 export GIT_PS1_SHOWUNTRACKEDFILES=1 # '%' -> Untracked Files
