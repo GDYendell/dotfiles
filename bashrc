@@ -124,7 +124,7 @@ PS1="${CYAN}╔${VENV}═${RESET}[\u@\h | \w | \A]${CYAN}═${GREEN}${GIT_STATE}
 export PS1
 
 # Apply solarized colours for Dracula theme
-eval `dircolors ~/.dir_colors/dircolors`
+eval `dircolors ./dircolors`
 
 # Keep pwd in new tab
 . /etc/profile.d/vte.sh
