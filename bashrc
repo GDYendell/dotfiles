@@ -1,6 +1,6 @@
 alias DUSORT="du -ksh * | sort -rh"
 alias DUSORTA="du -kah * | sort -rh"
-alias rebash=". ~/.bashrc_local"
+alias rebash=". ~/.bashrc"
 alias rehist="history -r"
 
 # Commands
@@ -13,6 +13,21 @@ alias gitk='gitk --all &'
 alias RESET='clear && printf "\e[3J"'
 alias ducks='du -cksh -- * | sort -rh | head'
 
+# Check for ssh connection
+for f in ~/.ssh/*pc0118*mef65357; do
+
+    ## Check if the glob gets expanded to existing files.
+    ## If not, f here will be exactly the pattern above
+    ## and the exists test will evaluate to false.
+    [ -e "$f" ] && echo "Found existing ssh socket" && ssh pc0118;
+
+    ## This is all we needed to know, so we can break after the first iteration
+    break
+done
+
+# Check pc0118 is reachable
+alias waitpc0118="until nc -vzw 2 pc0118 22; do sleep 2; done; aplay /usr/share/sounds/alsa/Side_Right.wav"
+
 # Override cd to allow swapping
 function cds()
 {
@@ -21,11 +36,11 @@ function cds()
 
 function del_known_host()
 {
-    sed -i.bak -e "$1d" /home/mef65357/.ssh/known_hosts
+    sed -i.bak -e "$1d" ~/.ssh/known_hosts
 }
 function undel_known_host()
 {
-    mv /home/mef65357/.ssh/known_hosts.bak /home/mef65357/.ssh/known_hosts
+    mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 }
 function repeat()
 {
@@ -37,9 +52,9 @@ function opacity()
 }
 
 # Git Formatting
-# source /home/mef65357/bin/oh-my-git/prompt.sh
-source ./git-completion.bash
-source ./git-prompt.sh
+# source ./oh-my-git/prompt.sh
+source /usr/share/bash-completion/completions/git
+source ~/dotfiles/git/git-prompt.sh
 export GIT_PS1_SHOWDIRTYSTATE=1 # '*' -> Unstaged Changes, '+' -> Staged Changes
 export GIT_PS1_SHOWSTASHSTATE=1 # '$' -> Something Stashed
 export GIT_PS1_SHOWUNTRACKEDFILES=1 # '%' -> Untracked Files
@@ -127,4 +142,6 @@ export PS1
 eval `dircolors ./dircolors`
 
 # Keep pwd in new tab
-. /etc/profile.d/vte.sh
+if [[ -f /etc/profile.c/vte.sh ]]; then
+	source /etc/profile.d/vte.sh
+fi

@@ -1,0 +1,4 @@
+import:
+    - ~/dotfiles/dracula/alacritty/dracula.yml
+font:
+    size: 14

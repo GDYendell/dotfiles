@@ -1,0 +1,9 @@
+[submodule "dracula/alacritty"]
+	path = dracula/alacritty
+	url = https://github.com/dracula/alacritty.git
+[submodule "dracula/firefox"]
+	path = dracula/firefox
+	url = https://github.com/dracula/firefox.git
+[submodule "polybar-modules/polybar-spotify"]
+	path = polybar-modules/polybar-spotify
+	url = https://github.com/GDYendell/polybar-spotify.git
