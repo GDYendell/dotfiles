@@ -1,6 +1,8 @@
 [user]
 	name = Gary Yendell
 	email = gary.yendell@diamond.ac.uk
+[core]
+	editor = vim
 [color]
         diff = auto
         status = auto
