@@ -276,7 +276,7 @@ exec_always --no-startup-id ~/dotfiles/i3/startup.sh
 #exec_always --no-startup-id sh ~/startup.sh
 
 # Enable Picom
-#exec_always --no-startup-id picom -b -c --active-opacity 0.98 --inactive-opacity 0.95 --backend GLX --vsync --config ~/.config/picom.conf
+#exec_always --no-startup-id picom --config ~/dotfiles/config/picom --experimental-backends
 
 # Enable polybar
 exec_always --no-startup-id ~/dotfiles/i3/polybar.sh
