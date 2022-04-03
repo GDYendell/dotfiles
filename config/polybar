@@ -56,8 +56,8 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 2
 
-font-0 = Iosevka:pixelsize=16;4
-font-4 = Iosevka:pixelsize=24;1
+font-0 = Garosevka:pixelsize=16;4
+font-4 = Garosevka:pixelsize=24;1
 font-1 = "Font Awesome 5 Free:style=Regular:pixelsize=12;2"
 font-2 = "Font Awesome 5 Free:style=Solid:pixelsize=12;2"
 font-3 = siji:pixelsize=10;1
