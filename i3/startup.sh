@@ -1,3 +1,14 @@
-xrandr --output DisplayPort-0 --pos 0x1080 --output HDMI-A-0 --pos 960x0 --output HDMI-A-1 --same-as DisplayPort-0
-feh --bg-fill ~/Pictures/HomerStarrySky.jpg
+# Monitor layout
+
+## Main + Secondary on top
+# xrandr --output DisplayPort-0 --pos 0x1080 --output HDMI-A-0 --pos 960x0 --output HDMI-A-1 --same-as DisplayPort-0
+
+# Enable Status Bar
+# ~/dotfiles/i3/polybar.sh
+
+# Set Background
+# feh --bg-fill ~/Pictures/HomerStarrySky.jpg
+
+# Enable Compositor
+# picom -b -c --active-opacity 0.98 --inactive-opacity 0.95 --backend GLX --vsync --config ~/.config/picom.conf
 
