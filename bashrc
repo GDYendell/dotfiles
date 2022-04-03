@@ -5,6 +5,7 @@ alias rehist="history -r"
 
 # Commands
 alias ls='ls --color=auto'
+alias ll='ls -l'
 alias cdn='cd $(\ls -1dt ./*/ | head -n 1)'
 alias make='rederr make'
 alias less='less -S -M -z-5 -W'
@@ -139,7 +140,7 @@ PS1="${CYAN}╔${VENV}═${RESET}[\u@\h | \w | \A]${CYAN}═${GREEN}${GIT_STATE}
 export PS1
 
 # Apply solarized colours for Dracula theme
-eval `dircolors ./dircolors`
+eval `dircolors ~/dotfiles/dircolors`
 
 # Keep pwd in new tab
 if [[ -f /etc/profile.c/vte.sh ]]; then
