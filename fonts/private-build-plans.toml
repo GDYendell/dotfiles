@@ -1,0 +1,60 @@
+[buildPlans.Garosevka]
+family = "Garosevka"
+spacing = "normal"
+serifs = "sans"
+no-cv-ss = false
+
+[buildPlans.Garosevka.variants.design]
+capital-k = "curly-serifless"
+a = "double-storey-toothless-corner"
+b = "toothless-corner"
+d = "toothless-corner-serifless"
+g = "earless-corner"
+i = "serifed-flat-tailed"
+j = "flat-hook-serifed"
+k = "curly-serifless"
+l = "serifed-flat-tailed"
+n = "earless-corner-straight"
+p = "earless-corner"
+q = "earless-corner"
+r = "earless-corner"
+t = "flat-hook-short-neck"
+u = "toothless-rounded"
+asterisk = "turn-hex-low"
+paren = "flat-arc"
+brace = "straight"
+number-sign = "slanted"
+ampersand = "closed"
+dollar = "open"
+percent = "rings-continuous-slash"
+lig-ltgteq = "slanted"
+ascii-single-quote = "raised-comma"
+punctuation-dot = "round"
+
+[buildPlans.Garosevka.variants.italic]
+k = "straight-serifless"
+
+[buildPlans.Garosevka.weights.extralight]
+shape = 200
+menu = 200
+css = 200
+
+[buildPlans.Garosevka.weights.regular]
+shape = 400
+menu = 400
+css = 400
+
+[buildPlans.Garosevka.weights.semibold]
+shape = 600
+menu = 600
+css = 600
+
+[buildPlans.Garosevka.weights.extrabold]
+shape = 800
+menu = 800
+css = 800
+
+[buildPlans.Garosevka.widths.normal]
+shape = 600
+menu = 5
+css = "normal"
