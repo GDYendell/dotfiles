@@ -254,31 +254,3 @@ workspace 0 output $BenQ
 
 ## Start up commands
 exec_always --no-startup-id ~/dotfiles/i3/startup.sh
-
-# Set top monitor position
-#exec_always xrandr --output DisplayPort-0 --pos 0x1080 --output HDMI-A-0 --pos 960x0 --output HDMI-A-1 --same-as DisplayPort-0
-#exec_always --no-startup-id xrandr --output HDMI-A-0 --pos 960x0
-#exec_always --no-startup-id xrandr --output HDMI-A-1 --same-as DisplayPort-0
-#exec_always --no-startup-id feh --bg-fill ~/Pictures/HomerStarrySky.jpg
-
-#exec_always --no-startup-id xrandr --output $LG --primary --output $LG --set TearFree on --output $LG --pos 0x1080 --output $BenQ --pos 960x0
-
-#exec --no-startup-id xrandr --output $LG --primary
-#exec --no-startup-id xrandr --auto --output $LG --set TearFree on
-#exec --no-startup-id xrandr --output $LG --pos 0x1080
-#exec --no-startup-id xrandr --output $BenQ --pos 960x0
-
-# Reload last configured background wallpaper
-#exec_always --no-startup-id sh ~/startup.sh
-
-# Enable Picom
-#exec_always --no-startup-id picom --config ~/dotfiles/config/picom --experimental-backends
-
-# Enable polybar
-exec_always --no-startup-id ~/dotfiles/i3/polybar.sh
-
-# Enable xscreensaver
-exec xscreensaver -no-splash
-
-
-
