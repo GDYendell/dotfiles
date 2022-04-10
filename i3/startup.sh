@@ -11,7 +11,7 @@ xrandr --output DisplayPort-0 --pos 0x1080 --output HDMI-A-0 --pos 960x0 --outpu
 feh --bg-fill ~/Pictures/HomerStarrySky.jpg
 
 # Enable Compositor
-picom -b -c --active-opacity 0.98 --inactive-opacity 0.95 --backend GLX --vsync --config ~/.config/picom.conf
+picom -b -c --active-opacity 0.98 --inactive-opacity 0.95 --backend GLX --vsync --config ~/dotfiles/config/picom
 
 # Start xscreensaver
 xscreensaver -no-splash
