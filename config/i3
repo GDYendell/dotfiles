@@ -235,22 +235,8 @@ hide_edge_borders smart
 gaps outer 2
 gaps inner 5
 
-# Monitor names
-set $LG = DisplayPort-0
-set $BenQ = HDMI-A-0
-set $TV = HDMI-A-1
-
-# Assign workspaces to monitors
-workspace 1 output $LG
-workspace 2 output $LG
-workspace 3 output $LG
-workspace 4 output $LG
-workspace 5 output $LG
-workspace 6 output $BenQ
-workspace 7 output $BenQ
-workspace 8 output $BenQ
-workspace 9 output $BenQ
-workspace 0 output $BenQ
+# Workspaces #
+##############
 
 ## Start up commands
 exec_always --no-startup-id ~/dotfiles/i3/startup.sh
