@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Terminate already running bar instances
-killall -q polybar
+killall -9 polybar
 killall zscroll
 
 # Wait until the processes have been shut down
