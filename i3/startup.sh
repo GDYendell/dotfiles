@@ -15,7 +15,3 @@ picom -b -c --active-opacity 0.98 --inactive-opacity 0.95 --backend GLX --vsync 
 
 # Start xscreensaver
 xscreensaver -no-splash
-
-# Mouse sensitivity and keyboard repeat rate
-xinput --set-prop "Logitech G502 HERO Gaming Mouse" "libinput Accel Speed" 1
-xset r rate 200 25
