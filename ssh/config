@@ -1,0 +1,8 @@
+Host pc
+  HostName pc
+  ProxyJump user@ssh
+  User user
+
+Host *
+  ControlMaster auto
+  ControlPath ~/.ssh/ssh_mux_%h_%p_%r
