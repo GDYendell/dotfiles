@@ -1,0 +1,74 @@
+# Use custom format
+format = """
+[┌─${python}| ](bold cyan)${username}@${hostname} [│](bold cyan) ${directory} \
+    ${git_branch}${git_commit}${git_status}${git_state}${git_metrics}[|](bold cyan)\
+    ${fill} [|─](bold cyan) ${time} [─](bold cyan)${line_break}\
+[│](bold cyan)\
+${memory_usage}\
+${env_var}\
+${custom}\
+${sudo}\
+${cmd_duration}\
+${jobs}\
+${battery}\
+${line_break}\
+${status}\
+${shell}\
+[└─](bold cyan)${character}"""
+
+# Wait 10 milliseconds for starship to check files under the current directory.
+scan_timeout = 10
+
+# Disable the blank line at the start of the prompt
+add_newline = false
+
+[fill]
+symbol = " "
+style = "bold cyan"
+
+[username]
+format = "[${user}](${style})"
+style_user = "white"
+show_always = true
+
+[hostname]
+format = "[${ssh_symbol}](bold blue)[${hostname}](white)"
+ssh_only = false
+
+[directory]
+format = "[${path}](white)[${read_only}](${read_only_style})"
+truncation_length = 5
+truncate_to_repo = false
+truncation_symbol = "… /"
+
+[time]
+format = "[$time](white)"
+disabled = false
+
+[python]
+format = '[${symbol}\(${virtualenv}\)─](cyan)'
+symbol = "🐍"
+version_format = "${raw}"
+
+[sudo]
+disabled = false
+symbol = ""
+
+[git_branch]
+format = "[│](bold cyan) [${symbol}${branch}(:${remote_name}/${remote_branch}) ](${style})"
+symbol = " "
+always_show_remote = true
+
+[git_commit]
+tag_disabled = false
+
+[git_metrics]
+disabled = false
+format = '([+${added}](${added_style}) [-${deleted}](${deleted_style}) )'
+
+[git_status]
+format = '(${conflicted}${stashed}${modified}${staged}${untracked}${ahead_behind} )'
+ahead = " [${count}⇡ ](green)"
+behind = " [${count}⇣ ](red)"
+diverged = " [${ahead_count}⇡ ](green)[${behind_count}⇣ ](red)"
+

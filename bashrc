@@ -155,3 +155,7 @@ eval `dircolors ~/dotfiles/dircolors`
 if [[ -f /etc/profile.c/vte.sh ]]; then
 	source /etc/profile.d/vte.sh
 fi
+
+# Starship
+export STARSHIP_CONFIG=$HOME/dotfiles/config/starship.toml
+eval "$(starship init bash)"
