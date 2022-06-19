@@ -11,5 +11,5 @@ if [[ "$(tty)" == "/dev/tty3" ]]; then
 fi
 if [[ "$(tty)" == "/dev/tty5" ]]; then
 	echo "TTY5 -> SteamOS"
-        gamescope -e -- steam -steamos -gamepadui
+        gamescope -O HDMI-A-2,DP-1 -e -- steam -steamos -gamepadui
 fi
