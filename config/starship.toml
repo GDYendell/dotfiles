@@ -47,12 +47,12 @@ disabled = false
 
 [python]
 format = '[${symbol}\(${virtualenv}\)─](cyan)'
-symbol = "🐍"
+symbol = "🐍"  # noto-fonts-emoji
 version_format = "${raw}"
 
 [sudo]
 disabled = false
-symbol = ""
+symbol = ""  # ttf-nerd-fonts-symbols-mono ?
 
 [git_branch]
 format = "[│](bold cyan) [${symbol}${branch}(:${remote_name}/${remote_branch}) ](${style})"
