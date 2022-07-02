@@ -52,7 +52,8 @@ version_format = "${raw}"
 
 [sudo]
 disabled = false
-symbol = ""  # ttf-nerd-fonts-symbols-mono ?
+symbol = " "  # ttf-nerd-fonts-symbols-mono ?
+format = "[${symbol}](${style})"
 
 [git_branch]
 format = "[│](bold cyan) [${symbol}${branch}(:${remote_name}/${remote_branch}) ](${style})"
