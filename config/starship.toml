@@ -49,6 +49,9 @@ disabled = false
 format = '[${symbol}\(${virtualenv}\)─](cyan)'
 symbol = "🐍"  # noto-fonts-emoji
 version_format = "${raw}"
+# Only appear when a venv is activated
+detect_extensions = []
+detect_files = []
 
 [sudo]
 disabled = false
