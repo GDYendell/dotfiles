@@ -4,6 +4,9 @@ $include /etc/inputrc
 # This probably needs to go in /etc/inputrc
 "\e[A": history-search-backward
 "\e[B": history-search-forward
+# Unbind PageUp/Down from history-search-*
+"\e[5~": nop
+"\e[6~": nop
 
 set completion-ignore-case on
 
