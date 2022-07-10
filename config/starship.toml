@@ -34,6 +34,7 @@ show_always = true
 [hostname]
 format = "[${ssh_symbol}](bold blue)[${hostname}](white)"
 ssh_only = false
+ssh_symbol = "🌐"
 
 [directory]
 format = "[${path}](white)[${read_only}](${read_only_style})"
