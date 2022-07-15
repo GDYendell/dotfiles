@@ -13,6 +13,7 @@ alias remake="rederr make $@ clean uninstall && rederr make $@"
 alias gitk='gitk --all &'
 alias RESET='clear && printf "\e[3J"'
 alias ducks='du -cksh -- * | sort -rh | head'
+alias lg="lazygit $@"
 
 # Check for ssh connection
 for f in ~/.ssh/*pc0118*mef65357; do
