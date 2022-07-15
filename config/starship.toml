@@ -32,7 +32,7 @@ style_user = "white"
 show_always = true
 
 [hostname]
-format = "[${ssh_symbol}](bold blue)[${hostname}](white)"
+format = "[[${hostname}](white) ${ssh_symbol}](bold blue)"
 ssh_only = false
 ssh_symbol = "🌐"
 
