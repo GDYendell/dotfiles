@@ -227,9 +227,11 @@ bindsym $mod+d exec --no-startup-id rofi -show drun -show-icons -lines 8 -column
 bindsym $mod+Shift+d exec "dmenu_run -nf '#F8F8F2' -nb '#282A36' -sb '#6272A4' -sf '#F8F8F2' -fn 'monospace-15' -p 'dmenu%'"
 
 # Disable window titlebars
-for_window [class=".*"] border pixel 1
-default_border pixel 1
-default_floating_border pixel 1
+set $border_pixels 0
+for_window [class=".*"] border pixel $border_pixels
+default_border pixel $border_pixels
+default_floating_border pixel $border_pixels
+for_window [class="firefox"] border pixel 1
 hide_edge_borders smart
 
 # Gaps
