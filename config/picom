@@ -218,7 +218,7 @@ rounded-corners-exclude = [
   "class_g = 'Polybar'",
   "class_g = 'dmenu'",
   #"class_g = 'code-oss'",
-  "class_g = 'firefox'",
+  "class_g = 'firefox'"
   #"class_g = 'Thunderbird'"
 ];
 round-borders = 1;
