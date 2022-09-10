@@ -15,6 +15,8 @@ alias RESET='clear && printf "\e[3J"'
 alias ducks='du -cksh -- * | sort -rh | head'
 alias lg="lazygit $@"
 alias vimr="vim -R $@"
+## Have to escape single quotes outside of quotes and concatenate seprate strings implicitly
+alias mansearch='man $(apropos --long . | dmenu -i -l 30 | awk '\''{print $2, $1}'\'' | tr -d '\''()'\'')'
 
 # Check for ssh connection
 for f in ~/.ssh/*pc0118*mef65357; do
