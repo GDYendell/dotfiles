@@ -17,8 +17,8 @@
 # Enable Compositor
 picom -b -c --active-opacity 0.98 --inactive-opacity 0.95 --backend GLX --vsync --config ~/dotfiles/config/picom
 
-# Start xscreensaver
-xscreensaver -no-splash
+# Run xidlehook for screen timeout and suspend
+./idle.sh
 
 # Mouse sensitivity
 # xinput --set-prop "Logitech G502 HERO Gaming Mouse" "libinput Accel Speed" 1
