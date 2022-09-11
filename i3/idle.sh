@@ -17,7 +17,7 @@ export LOCK_DELAY=180
 export SUSPEND_DELAY=300
 
 # Run xidlehook
-xidlehook \
+xidlehook --detect-sleep \
     `# Don't lock when there's a fullscreen application` \
     --not-when-fullscreen \
     `# Don't lock when there's audio playing` \
