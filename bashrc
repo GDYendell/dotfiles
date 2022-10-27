@@ -59,6 +59,9 @@ function whathaveidone()
 {
     ls -t --color=always -l | grep $(whoami) | tail -n +2 | head
 }
+function tldr {
+    curl cht.sh/${1} | less -r
+}
 
 # Function for creating git aliases
 GIT_ALIAS () { ALIAS=$1; \
