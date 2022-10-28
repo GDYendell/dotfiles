@@ -1,3 +1,5 @@
+export PATH=$PATH:~/bin
+
 alias DUSORT="du -ksh * | sort -rh"
 alias DUSORTA="du -kah * | sort -rh"
 alias rebash=". ~/.bashrc"
