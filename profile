@@ -7,7 +7,7 @@ if [[ "$(tty)" == "/dev/tty2" ]]; then
 fi
 if [[ "$(tty)" == "/dev/tty3" ]]; then
 	echo "TTY3 -> sway"
-        sway
+        sway > ~/sway-logs/$(date +"%F-%H-%M-%S").log 2>&1
 fi
 if [[ "$(tty)" == "/dev/tty5" ]]; then
 	echo "TTY5 -> SteamOS"
