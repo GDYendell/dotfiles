@@ -66,7 +66,9 @@ shadow-exclude = [
   "class_g = 'Conky'",
   "class_g ?= 'Notify-osd'",
   "class_g = 'Cairo-clock'",
-  "_GTK_FRAME_EXTENTS@:c"
+  "_GTK_FRAME_EXTENTS@:c",
+  "class_g = 'origin.exe'",
+  "_NET_WM_STATE@:32a *= '_NET_WM_STATE_SKIP_PAGER'",  # Origin mini windows?
 ];
 
 # Specify a X geometry that describes the region in which shadow should not
@@ -151,7 +153,9 @@ focus-exclude = [
 # example:
 #    opacity-rule = [ "80:class_g = 'URxvt'" ];
 #
-# opacity-rule = []
+opacity-rule = [
+#  "0:class_g = 'origin.exe'"
+];
 
 
 #################################
@@ -196,7 +200,9 @@ blur-kern = "3x3box";
 blur-background-exclude = [
   "window_type = 'dock'",
   "window_type = 'desktop'",
-  "_GTK_FRAME_EXTENTS@:c"
+  "_GTK_FRAME_EXTENTS@:c",
+  # Make sure hidden origin windows aren't visible because of blurring
+  "class_g = 'origin.exe'"
 ];
 
 blur-method = "dual_kawase";
