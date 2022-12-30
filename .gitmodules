@@ -7,3 +7,6 @@
 [submodule "polybar-modules/polybar-spotify"]
 	path = polybar-modules/polybar-spotify
 	url = https://github.com/GDYendell/polybar-spotify.git
+[submodule "dracula/vim"]
+	path = dracula/vim
+	url = https://github.com/dracula/vim.git
