@@ -39,4 +39,4 @@ fi
 [ -f /etc/xprofile ] && . /etc/xprofile
 [ -f ~/.xprofile ] && . ~/.xprofile
 
-exec /usr/bin/i3 > ~/i3-logs/$(date+"%F-%k-%M-%S").log 2>&1
+exec /usr/bin/i3 > ~/i3-logs/$(date +"%F-%k-%M-%S").log 2>&1
