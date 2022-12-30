@@ -35,6 +35,14 @@ done
 # Check pc0118 is reachable
 alias waitpc0118="until nc -vzw 2 pc0118 22; do sleep 2; done; aplay /usr/share/sounds/alsa/Side_Right.wav"
 
+function highlight()
+{
+    grep --color -E "$1|$" "${@:1}"
+}
+function highlightp()
+{
+    grep --color -E "$1|$"
+}
 # Override cd to allow swapping
 function cds()
 {
@@ -111,6 +119,9 @@ PROMPT_COMMAND="history -a"
 
 # Apply solarized colours for Dracula theme
 eval `dircolors ~/dotfiles/dircolors`
+
+# Source antidot environment variables
+eval "$(antidot init)"
 
 # Keep pwd in new tab
 if [[ -f /etc/profile.c/vte.sh ]]; then
