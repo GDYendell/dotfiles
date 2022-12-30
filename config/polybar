@@ -226,7 +226,7 @@ label-foreground = ${colors.foreground}
 exec = pulseaudio-control --icons-volume " , " --icon-muted " " --node-nicknames-from "device.description" --node-nickname "alsa_output.pci-0000_01_00.1.hdmi-stereo-extra4:  Speakers" --node-nickname "alsa_output.usb-Creative_Technology_Ltd_Sound_Blaster_G3_0BF5542024D8B331-03.analog-surround-21:  Headphones" listen
 click-right = exec pavucontrol &
 click-left = pulseaudio-control togmute
-click-middle = pulseaudio-control --sink-blacklist "alsa_output.pci-0000_00_14.2.iec958-stereo" next-sink
+click-middle = pulseaudio-control --node-blacklist "alsa_output.pci-0000_00_14.2.iec958-stereo" next-node
 scroll-up = pulseaudio-control --volume-max 99 up
 scroll-down = pulseaudio-control --volume-max 99 down
 
