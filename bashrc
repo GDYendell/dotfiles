@@ -4,7 +4,8 @@ alias DUSORT="du -ksh * | sort -rh"
 alias DUSORTA="du -kah * | sort -rh"
 alias rebash=". ~/.bashrc"
 alias rehist="history -r"
-alias i3-log="less ~/i3-logs/$(ls -art ~/i3-logs | tail -n 1)"
+alias i3-log='less ~/i3-logs/$(ls -art ~/i3-logs | tail -n 1)'
+alias sway-log='less ~/sway-logs/$(ls -art ~/sway-logs | tail -n 1)'
 
 # Commands
 alias ls='ls --color=auto'
