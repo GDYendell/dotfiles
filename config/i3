@@ -42,6 +42,7 @@ bindsym $mod+Shift+Return exec i3-sensible-terminal; $floating_centre
 
 # kill focused window
 bindsym $mod+Shift+q kill
+bindsym $mod+x kill
 
 # Shift focus:
 bindsym $mod+Left focus left
