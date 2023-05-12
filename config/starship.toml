@@ -54,6 +54,9 @@ version_format = "${raw}"
 detect_extensions = []
 detect_files = []
 
+[conda]
+format = '[$symbol$environment](dimmed green) '
+
 [sudo]
 disabled = false
 symbol = " "  # ttf-nerd-fonts-symbols-mono ?
