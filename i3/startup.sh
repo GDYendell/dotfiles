@@ -7,6 +7,9 @@
 # Work | Main + Secondary Right
 # xrandr --output DP-0 --mode 3440x1440 --pos 0x0 --rotate normal --panning 3440x1440 --primary --output DP-2 --mode 1920x1200 --rotate left --pos 3440x0 --panning 1920x1200
 
+# Keybindings
+xmodmap ~/.Xmodmap
+
 # Enable Status Bar
 # ~/dotfiles/i3/polybar.sh
 
