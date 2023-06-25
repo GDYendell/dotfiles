@@ -1,0 +1,1 @@
+antidot mangohud polybar starship visual-studio-code-bin pulseaudio-control
