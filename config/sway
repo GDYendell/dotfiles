@@ -81,6 +81,7 @@ gaps inner 3
 
     # Kill focused window
     bindsym $mod+Shift+q kill
+    bindsym $mod+Shift+x kill
 
     # Start your launcher
     bindsym $mod+d exec $menu
