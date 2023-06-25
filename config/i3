@@ -37,8 +37,8 @@ set $floating_centre exec "bash -c 'sleep 0.2s; i3-msg floating enable; i3-msg r
 set $get_current_workspace exec "current_workspace=\\"$(i3-msg -t get_workspaces | jq -r '.[] | select(.focused==true).name')\\""
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
-bindsym $mod+Shift+Return exec i3-sensible-terminal; $floating_centre
+bindsym $mod+Return exec alacritty
+bindsym $mod+Shift+Return exec alacritty; $floating_centre
 
 # kill focused window
 bindsym $mod+Shift+q kill
