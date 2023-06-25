@@ -71,6 +71,15 @@ gaps inner 3
 # input "1267:12725:ELAN074E:00_04F3:31B5_Mouse" {
 #         natural_scroll enabled
 # }
+input type:keyboard {
+    xkb_layout gb
+    xkb_options caps:super
+}
+
+input "1133:49291:Logitech_G502_HERO_Gaming_Mouse" {
+    accel_profile flat
+    pointer_accel 0.1
+}
 
 ### Key bindings
 #
