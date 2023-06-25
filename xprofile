@@ -1,2 +1,6 @@
-xinput --set-prop "Logitech G502 HERO Gaming Mouse" "libinput Accel Speed" 0.1
-xset r rate 250 25
+# Cursor speed
+xinput --set-prop "Logitech G502 HERO Gaming Mouse" "libinput Accel Speed" 0.2
+# Cursor acceleration off
+xinput --set-prop "Logitech G502 HERO Gaming Mouse" "libinput Accel Profile Enabled" 0, 1
+#  Keyboard delay and repeat rate
+xset r rate 250 40
