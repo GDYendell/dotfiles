@@ -125,6 +125,9 @@ eval `dircolors ~/dotfiles/dircolors`
 # Source antidot environment variables
 eval "$(antidot init)"
 
+# Manually bind inputrc for some reason
+bind -f ~/.inputrc
+
 # Keep pwd in new tab
 if [[ -f /etc/profile.c/vte.sh ]]; then
 	source /etc/profile.d/vte.sh
