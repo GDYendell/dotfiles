@@ -122,9 +122,6 @@ PROMPT_COMMAND="history -a"
 # Apply solarized colours for Dracula theme
 eval `dircolors ~/dotfiles/dircolors`
 
-# Source antidot environment variables
-eval "$(antidot init)"
-
 # Manually bind inputrc for some reason
 bind -f ~/.inputrc
 
