@@ -1,2 +1,2 @@
 alacritty arandr firefox git lazygit man os-prober pacman-contrib pavucontrol picom treebo zscroll-git
-steam gamescope gamemode lib32-gamemode lutris wine
+steam gamescope gamemode lib32-gamemode lutris wine noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra
