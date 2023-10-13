@@ -11,13 +11,13 @@ fi
 cd /tmp
 
 # Tools
-if [[ "$DISTRO" =~ Debian ]]; then
+if [[ "$DISTRO" =~ Debian|Ubuntu ]]; then
     ${SUDO} apt-get update
     ${SUDO} apt-get install -y vim
 fi
 
 # Lazygit
-if [[ "$DISTRO" =~ Debian ]]; then
+if [[ "$DISTRO" =~ Debian|Ubuntu ]]; then
     LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
     curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
     tar xf lazygit.tar.gz lazygit
