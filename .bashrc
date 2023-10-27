@@ -27,7 +27,7 @@ alias mansearch='man $(apropos --long . | dmenu -i -l 30 | awk '\''{print $2, $1
 alias dotfiles="/usr/bin/git --git-dir=$HOME/dotfiles.git/ --work-tree=$HOME"
 
 # Check for ssh connection
-for f in ~/.ssh/*pc0118*user; do
+for f in ~/.ssh/*pc0118*mef65357; do
 
   ## Check if the glob gets expanded to existing files.
   ## If not, f here will be exactly the pattern above

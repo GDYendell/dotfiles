@@ -280,6 +280,20 @@ gaps outer 2
 gaps inner 5
 
 # Workspaces #
+set $primary DisplayPort-0
+set $secondary HDMI-A-0
+set $tv HDMI-A-0
+
+workspace 1 output $primary
+workspace 2 output $primary
+workspace 3 output $primary
+workspace 4 output $primary
+workspace 5 output $primary
+workspace 6 output $secondary
+workspace 7 output $secondary
+workspace 8 output $secondary
+workspace 9 output $secondary
+workspace 0 output $tv
 ##############
 
 ## Start up commands
