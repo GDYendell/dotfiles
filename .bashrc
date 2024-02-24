@@ -120,10 +120,10 @@ shopt -s histappend                      # Append to history, don't overwrite it
 PROMPT_COMMAND="history -a"
 
 # Apply solarized colours for Dracula theme
-eval `dircolors ~/dotfiles/dircolors`
+eval `dircolors ~/.dircolors`
 
 # Manually bind inputrc for some reason
-bind -f ~/.inputrc
+bind -f ~/.config/readline/inputrc
 
 # Keep pwd in new tab
 if [[ -f /etc/profile.c/vte.sh ]]; then
@@ -131,5 +131,5 @@ if [[ -f /etc/profile.c/vte.sh ]]; then
 fi
 
 # Starship
-export STARSHIP_CONFIG=$HOME/dotfiles/config/starship.toml
+export STARSHIP_CONFIG=$HOME/.config/starship.toml
 eval "$(starship init bash)"

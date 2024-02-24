@@ -1,5 +1,5 @@
 # Edit /etc/profile to source this file, e.g.
-# . ~/dotfiles/profile
+# . ~/dotfiles/.profile
 
 # Source antidot environment variables
 eval "$(antidot init)"
