@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Vial
+Exec=/scratch/sw/vial/Vial-v0.7.1-x86_64.AppImage
+Terminal=false
+Type=Application
+Icon=~/dotfiles/applications/vial.png
+StartupWMClass=vial
+Comment=Vial GUI
+MimeType=x-scheme-handler/vial;
+Categories=Office;
