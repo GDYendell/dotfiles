@@ -46,22 +46,22 @@ bindsym $mod+x kill
 
 # Shift focus:
 bindsym $mod+Left focus left
-bindsym $mod+Up focus up
 bindsym $mod+Down focus down
+bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 bindsym $mod+j focus left
-bindsym $mod+k focus up
-bindsym $mod+l focus down
+bindsym $mod+k focus down
+bindsym $mod+l focus up
 bindsym $mod+semicolon focus right
 
 # Move current container:
 bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 bindsym $mod+Shift+j move left
-bindsym $mod+Shift+k move up
-bindsym $mod+Shift+l move down
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
 bindsym $mod+Shift+semicolon move right
 
 # Split horizontally
@@ -233,6 +233,12 @@ mode "workspace" {
 
     bindsym Escape mode "default"
 }
+
+# Pause mode
+mode "pause" {
+    bindsym Escape mode "default"
+}
+bindsym $mod+p mode "pause"
 
 # Dracula Theme
 # class                 border  bground text    indicator child_border
