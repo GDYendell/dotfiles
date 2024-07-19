@@ -1,4 +1,6 @@
 clear Lock
+! Make Shift+Alt just Shift+Alt, not Meta
+keycode 64 = Alt_L
 keycode 66 = Hyper_L
 keycode 135 = Hyper_L
 ! Bind Right Meta to Compose
