@@ -16,3 +16,6 @@
 [submodule "dracula/vim"]
 	path = dracula/vim
 	url = https://github.com/dracula/vim.git
+[submodule ".config/nvim"]
+	path = .config/nvim
+	url = git@github.com:GDYendell/nvim-config.git
