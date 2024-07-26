@@ -7,14 +7,11 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     SUDO="sudo"
 fi
 
+# Init repo
+git -C ~/dotfiles submodule init && git -C ~/dotfiles submodule update --recursive
+
 # Don't pollute workspace with downloaded files
 cd /tmp
-
-# Tools
-if [[ "$DISTRO" =~ Debian|Ubuntu ]]; then
-    ${SUDO} apt-get update
-    ${SUDO} apt-get install -y vim
-fi
 
 # Lazygit
 if [[ "$DISTRO" =~ Debian|Ubuntu ]]; then
@@ -26,6 +23,24 @@ elif [[ "$DISTRO" =~ CentOS ]]; then
     ${SUDO} dnf copr enable atim/lazygit -y
     ${SUDO} dnf install lazygit
 fi
+
+# Neovim
+curl -Lo nvim-linux64.tar.gz https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+tar xf nvim-linux64.tar.gz
+${SUDO} install nvim-linux64/bin/nvim /usr/local/bin
+${SUDO} cp -r nvim-linux64/lib/nvim /usr/local/lib/nvim
+${SUDO} cp -r nvim-linux64/share/nvim /usr/local/share/nvim
+ln -s ~/dotfiles/.config/nvim ~/.config/nvim
+ln -s ~/dotfiles/.vimrc ~/.vimrc
+
+# Nerd Fonts
+mkdir -p ~/.local/share/fonts
+cd ~/.local/share/fonts
+curl -Lo NerdFontsSymbolsOnly.tar.xz https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/NerdFontsSymbolsOnly.tar.xz
+tar xf NerdFontsSymbolsOnly.tar.xz
+rm NerdFontsSymbolsOnly.tar.xz
+fc-cache -fv
+cd /tmp
 
 # Starship Prompt
 curl -sS https://starship.rs/install.sh | sh -s -- -y
