@@ -1,3 +1,6 @@
+# Blesh
+[[ $- == *i* ]] && source /usr/share/blesh/ble.sh --noattach
+
 export PATH=$PATH:~/bin
 
 alias DUSORT="du -ksh * | sort -rh"
@@ -134,6 +137,12 @@ fi
 # Starship
 export STARSHIP_CONFIG=$HOME/.config/starship.toml
 eval "$(starship init bash)"
+
+# blesh
+[[ ${BLE_VERSION-} ]] && ble-attach
+
+# Atuin
+eval "$(atuin init bash)"
 
 # zoxide
 eval "$(zoxide init --cmd cd bash)"
