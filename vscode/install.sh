@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# echo commands as script is run
+set -x
+
 # Run commands with sudo if container user is not root
 if [[ $(/usr/bin/id -u) -ne 0 ]]; then
   SUDO="sudo"
