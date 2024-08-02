@@ -33,7 +33,11 @@ curl -Lo NerdFontsSymbolsOnly.tar.xz https://github.com/ryanoasis/nerd-fonts/rel
 tar xf NerdFontsSymbolsOnly.tar.xz
 rm NerdFontsSymbolsOnly.tar.xz
 fc-cache -fv
-cd /tmp
+
+# Atuin - Relies on global mount of ~/.local/share/atuin/ to access db
+curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
+mkdir -p ~/.config/atuin
+ln -s ~/dotfiles/.config/atuin/config.toml ~/.config/atuin/config.toml
 
 # Starship Prompt
 curl -sS https://starship.rs/install.sh | sh -s -- -y
