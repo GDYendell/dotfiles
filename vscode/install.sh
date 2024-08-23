@@ -47,4 +47,4 @@ curl -sS https://starship.rs/install.sh | sh -s -- -y
 mkdir -p ~/.config
 ln -s ~/dotfiles/.config/starship.toml ~/.config/starship.toml
 
-echo -e '\n. ~/dotfiles/.bashrc' >>~/.bashrc
+echo -e '\n. ~/dotfiles/.zshrc' >> ~/.zshrc
