@@ -196,7 +196,7 @@ for_window [class="origin.exe"] floating enable
 for_window [class="steam_app_1182480"] floating enable
 #for_window [class="origin.exe"] move to workspace A
 #for_window [class="steam_app_1182480"] move to workspace A
-for_window [title="EA"] floating enable
+for_window [title="^EA$"] floating enable
 for_window [class="lutris"] floating enable
 for_window [class="Godot_Engine"] floating enable
 
