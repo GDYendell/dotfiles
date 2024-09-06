@@ -138,3 +138,6 @@ eval "$(atuin init bash)"
 
 # zoxide
 eval "$(zoxide init --cmd cd bash)"
+
+# Source antidot environment variables
+eval "$(antidot init)"

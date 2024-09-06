@@ -1,6 +1,3 @@
-# Source antidot environment variables
-eval "$(antidot init)"
-
 if [[ "$(tty)" == "/dev/tty2" ]]; then
   echo "TTY2 -> i3"
   startx
