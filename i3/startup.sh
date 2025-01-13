@@ -22,4 +22,4 @@ xmodmap ~/.Xmodmap
 # conky
 
 # Mouse sensitivity
-# xinput --set-prop "Logitech G502 HERO Gaming Mouse" "libinput Accel Speed" 1
+xinput --set-prop "Logitech G502 HERO Gaming Mouse" "Coordinate Transformation Matrix" 3.0 0 0 0 3.0 0 0 0 1
