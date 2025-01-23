@@ -14,6 +14,9 @@ git -C ~/dotfiles submodule init && git -C ~/dotfiles submodule update --recursi
 # Don't pollute workspace with downloaded files
 cd /tmp
 
+# System Packages
+${SUDO} apt-get update && ${SUDO} apt install -y zsh
+
 # Lazygit
 LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
 curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
@@ -36,6 +39,7 @@ curl -Lo NerdFontsSymbolsOnly.tar.xz https://github.com/ryanoasis/nerd-fonts/rel
 tar xf NerdFontsSymbolsOnly.tar.xz
 rm NerdFontsSymbolsOnly.tar.xz
 fc-cache -fv
+cd -
 
 # Atuin - Relies on global mount of ~/.local/share/atuin/ to access db
 curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
@@ -47,4 +51,6 @@ curl -sS https://starship.rs/install.sh | sh -s -- -y
 mkdir -p ~/.config
 ln -s ~/dotfiles/.config/starship.toml ~/.config/starship.toml
 
-echo -e '\n. ~/dotfiles/.zshrc' >> ~/.zshrc
+# zsh
+touch ~/.zshrc
+echo -e '\n. ~/dotfiles/.zshrc' >>~/.zshrc
