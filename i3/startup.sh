@@ -18,6 +18,9 @@ xmodmap ~/.Xmodmap
 # Run xidlehook for screen timeout and suspend
 # ~/i3/idle.sh
 
+# Run dunst for notifications
+dunst &
+
 # Run conky
 # conky
 
