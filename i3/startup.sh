@@ -25,4 +25,4 @@ dunst &
 # conky
 
 # Mouse sensitivity
-xinput --set-prop "Logitech G502 HERO Gaming Mouse" "Coordinate Transformation Matrix" 3.0 0 0 0 3.0 0 0 0 1
+# xinput --set-prop "Logitech G502 HERO Gaming Mouse" "Coordinate Transformation Matrix" 3.0 0 0 0 3.0 0 0 0 1
