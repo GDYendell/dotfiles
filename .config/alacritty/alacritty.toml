@@ -1,4 +1,6 @@
-import = ["/home/gdy/dracula/alacritty/dracula.toml"]
 
 [font]
 size = 14
+
+[general]
+import = ["/home/gdy/dracula/alacritty/dracula.toml"]
