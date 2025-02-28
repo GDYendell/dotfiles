@@ -24,11 +24,11 @@ tar xf lazygit.tar.gz lazygit
 ${SUDO} install lazygit /usr/local/bin
 
 # Neovim
-curl -Lo nvim-linux64.tar.gz https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-tar xf nvim-linux64.tar.gz
-${SUDO} install nvim-linux64/bin/nvim /usr/local/bin
-${SUDO} cp -r nvim-linux64/lib/nvim /usr/local/lib/nvim
-${SUDO} cp -r nvim-linux64/share/nvim /usr/local/share/nvim
+curl -Lo nvim-linux-x86_64.tar.gz https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+tar xf nvim-linux-x86_64.tar.gz
+${SUDO} install nvim-linux-x86_64/bin/nvim /usr/local/bin
+${SUDO} cp -r nvim-linux-x86_64/lib/nvim /usr/local/lib/nvim
+${SUDO} cp -r nvim-linux-x86_64/share/nvim /usr/local/share/nvim
 ln -s ~/dotfiles/.config/nvim ~/.config/nvim
 ln -s ~/dotfiles/.vimrc ~/.vimrc
 
