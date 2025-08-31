@@ -79,8 +79,8 @@ format = '([+${added}](${added_style}) [-${deleted}](${deleted_style}) )'
 
 [git_status]
 format = '(${conflicted}${stashed}${modified}${staged}${untracked}${ahead_behind} )'
-ahead = " [${count}⇡ ](green)"
-behind = " [${count}⇣ ](red)"
+ahead = " [${count}⇡](green)"
+behind = " [${count}⇣](red)"
 diverged = " [${ahead_count}⇡ ](green)[${behind_count}⇣ ](red)"
 
 [kubernetes]
