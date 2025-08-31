@@ -1,28 +1,31 @@
 [buildPlans.Garosevka]
 family = "Garosevka"
-spacing = "normal"
+spacing = "term"
 serifs = "sans"
-no-cv-ss = true
+noCvSs = true
+exportGlyphNames = false
 
 [buildPlans.Garosevka.variants.design]
 capital-k = "curly-serifless"
-a = "single-storey-earless-rounded-tailed"
-b = "toothless-corner"
+capital-z = "straight-serifless"
+a = "single-storey-earless-corner-tailed"
+b = "toothless-corner-serifless"
 d = "toothless-corner-serifless"
-g = "earless-corner"
-i = "tailed-serifed"
+g = "single-storey-earless-corner"
+i = "serifed-semi-tailed"
 j = "serifed"
 k = "curly-serifless"
-l = "tailed-serifed"
-m = "earless-corner-double-arch"
-n = "earless-corner-straight"
-p = "earless-corner"
-q = "earless-corner"
-r = "earless-corner"
-t = "standard-short-neck"
-u = "toothless-corner"
-y = "straight-turn"
+l = "serifed-semi-tailed"
+m = "earless-corner-double-arch-serifless"
+n = "earless-corner-straight-serifless"
+p = "earless-corner-serifless"
+q = "earless-corner-straight-serifless"
+r = "earless-corner-serifless"
+t = "flat-hook"
+u = "toothless-corner-serifless"
+y = "straight-turn-serifless"
 asterisk = "turn-hex-low"
+ascii-single-quote = "straight"
 paren = "flat-arc"
 brace = "straight"
 number-sign = "slanted"
@@ -30,36 +33,36 @@ dollar = "open"
 cent = "open"
 percent = "rings-continuous-slash"
 lig-ltgteq = "slanted"
-ascii-single-quote = "straight"
 
-[buildPlans.Garosevka.weights.thin]
-shape = 100
-menu = 100
-css = 100
-
-[buildPlans.Garosevka.weights.regular]
+[buildPlans.Garosevka.weights.Regular]
 shape = 400
 menu = 400
 css = 400
 
-[buildPlans.Garosevka.weights.bold]
+[buildPlans.Garosevka.weights.Bold]
 shape = 700
 menu = 700
 css = 700
 
-[buildPlans.Garosevka.widths.normal]
+[buildPlans.Garosevka.weights.Thin]
+shape = 100
+menu = 100
+css = 100
+
+[buildPlans.Garosevka.widths.Normal]
 shape = 600
 menu = 5
 css = "normal"
 
-[buildPlans.Garosevka.slopes.upright]
+[buildPlans.Garosevka.slopes.Upright]
 angle = 0
 shape = "upright"
 menu = "upright"
 css = "normal"
 
-[buildPlans.Garosevka.slopes.italic]
+[buildPlans.Garosevka.slopes.Italic]
 angle = 9.4
 shape = "italic"
 menu = "italic"
 css = "italic"
+
