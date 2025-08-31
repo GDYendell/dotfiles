@@ -1,3 +1,5 @@
+export PATH=$PATH:/home/gdy/.cargo/bin
+
 if [[ "$(tty)" == "/dev/tty2" ]]; then
   echo "TTY2 -> i3"
   startx
@@ -10,3 +12,5 @@ if [[ "$(tty)" == "/dev/tty5" ]]; then
   echo "TTY5 -> SteamOS"
   gamescope -O HDMI-A-2,DP-1 -e -- steam -steamos -gamepadui
 fi
+
+. "$HOME/.local/bin/env"

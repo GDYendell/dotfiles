@@ -1,3 +1,7 @@
+export PATH=$PATH:/home/gdy/.cargo/bin
+
+. "$HOME/.local/bin/env"
+
 # Use consistent socket to share. HOSTNAME in case of networked HOME.
 export SSH_AUTH_SOCK=$HOME/.ssh/ssh-agent.$HOSTNAME.sock
 
