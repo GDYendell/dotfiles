@@ -56,6 +56,8 @@ alias lg="lazygit $@"
 alias vimr="vim -R $@"
 alias mansearch='man $(apropos --long . | dmenu -i -l 30 | awk '\''{print $2, $1}'\'' | tr -d '\''()'\'')'
 alias dotfiles="/usr/bin/git --git-dir=$HOME/dotfiles.git/ --work-tree=$HOME"
+alias kc="kubectl"
+alias x="startx"
 
 function repeat() {
   fc -$1 -1
