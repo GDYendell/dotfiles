@@ -85,7 +85,7 @@ diverged = " [${ahead_count}⇡ ](green)[${behind_count}⇣ ](red)"
 
 [kubernetes]
 format = '[│](bold cyan) [⛵ $cluster \($namespace\) ](dimmed green)'
-disabled = false
+disabled = true
 contexts = [
   { context_pattern = "dev.local.cluster.k8s", style = "green", symbol = "💔 " },
 ]
