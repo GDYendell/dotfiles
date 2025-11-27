@@ -31,6 +31,7 @@ ${SUDO} cp -r nvim-linux-x86_64/lib/nvim /usr/local/lib/nvim
 ${SUDO} cp -r nvim-linux-x86_64/share/nvim /usr/local/share/nvim
 ln -s ~/dotfiles/.config/nvim ~/.config/nvim
 ln -s ~/dotfiles/.vimrc ~/.vimrc
+ln -s ~/dotfiles/.config/lazygit ~/.config/lazygit
 
 # Nerd Fonts
 mkdir -p ~/.local/share/fonts
