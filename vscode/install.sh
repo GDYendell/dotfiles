@@ -15,7 +15,7 @@ git -C ~/dotfiles submodule init && git -C ~/dotfiles submodule update --recursi
 cd /tmp
 
 # System Packages
-${SUDO} apt-get update && ${SUDO} apt install -y zsh
+${SUDO} apt-get update && ${SUDO} apt install -y zsh stow
 
 # Lazygit
 LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
@@ -29,9 +29,6 @@ tar xf nvim-linux-x86_64.tar.gz
 ${SUDO} install nvim-linux-x86_64/bin/nvim /usr/local/bin
 ${SUDO} cp -r nvim-linux-x86_64/lib/nvim /usr/local/lib/nvim
 ${SUDO} cp -r nvim-linux-x86_64/share/nvim /usr/local/share/nvim
-ln -s ~/dotfiles/.config/nvim ~/.config/nvim
-ln -s ~/dotfiles/.vimrc ~/.vimrc
-ln -s ~/dotfiles/.config/lazygit ~/.config/lazygit
 
 # Nerd Fonts
 mkdir -p ~/.local/share/fonts
@@ -45,13 +42,12 @@ cd -
 # Atuin - Relies on global mount of ~/.local/share/atuin/ to access db
 curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
 mkdir -p ~/.config/atuin
-ln -s ~/dotfiles/.config/atuin/config.toml ~/.config/atuin/config.toml
 
 # Starship Prompt
 curl -sS https://starship.rs/install.sh | sh -s -- -y
-mkdir -p ~/.config
-ln -s ~/dotfiles/.config/starship.toml ~/.config/starship.toml
 
 # zsh
 touch ~/.zshrc
-echo -e '\n. ~/dotfiles/.zshrc' >>~/.zshrc
+echo -e '\n. ~/dotfiles/zsh/.zshrc' >>~/.zshrc
+
+stow -d ~/dotfiles atuin lazygit starship

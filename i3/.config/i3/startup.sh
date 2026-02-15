@@ -6,7 +6,7 @@
 xmodmap ~/.Xmodmap
 
 # Enable Status Bar
-# ~/i3/polybar.sh
+# ~/.config/i3/polybar.sh
 
 # Set Background
 # feh --bg-fill ~/Pictures/HomerStarrySky.jpg
@@ -16,7 +16,7 @@ xmodmap ~/.Xmodmap
 # picom -b -c --active-opacity 0.98 --inactive-opacity 0.95 --backend GLX --vsync --config ~/.config/picom
 
 # Run xidlehook for screen timeout and suspend
-# ~/i3/idle.sh
+# ~/i3/.config/idle.sh
 
 # Run dunst for notifications
 dunst &

@@ -105,7 +105,7 @@ bindsym $mod+Shift+Tab mode scratchpad
 bindsym $mod+Shift+space floating toggle; mode "default"
 
 # Show/hide floating windows on current workspace
-bindsym $mod+Tab exec ~/i3/toggle-floating
+bindsym $mod+Tab exec ~/.config/i3/toggle-floating
 
 # Make window visible on all workspaces
 bindsym $mod+Shift+s sticky toggle
@@ -283,4 +283,4 @@ gaps inner 5
 ##############
 
 ## Start up commands
-exec_always --no-startup-id ~/i3/startup.sh
+exec_always --no-startup-id ~/.config/i3/startup.sh
