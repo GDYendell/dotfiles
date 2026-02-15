@@ -59,6 +59,7 @@ alias dotfiles="/usr/bin/git --git-dir=$HOME/dotfiles.git/ --work-tree=$HOME"
 alias kc="kubectl"
 alias kc-ns='kubectl config set-context --current --namespace $1'
 alias x="startx"
+alias h="start-hyprland"
 
 function repeat() {
   fc -$1 -1
