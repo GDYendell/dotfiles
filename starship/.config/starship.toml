@@ -1,6 +1,6 @@
 # Use custom format
 format = """
-[┌─${python}| ${container}](bold cyan)${username}@${hostname} [│](bold cyan) ${directory} \
+[┌─${python}| ${container}](bold cyan)${username}@${hostname} [|](bold cyan) ${directory} \
     ${git_branch}${git_commit}${git_status}${git_state}${git_metrics}\
     ${kubernetes}\
     [|](bold cyan)\
