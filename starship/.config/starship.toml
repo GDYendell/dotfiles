@@ -1,6 +1,6 @@
 # Use custom format
 format = """
-[┌─${python}| ${container}](bold cyan)${username}@${hostname} [│](bold cyan) ${directory} \
+[┌─${python}| ${container}](bold cyan)${username}@${hostname} [|](bold cyan) ${directory} \
     ${git_branch}${git_commit}${git_status}${git_state}${git_metrics}\
     ${kubernetes}\
     [|](bold cyan)\
@@ -66,7 +66,7 @@ symbol = " "                    # ttf-nerd-fonts-symbols-mono ?
 format = "[${symbol}](${style})"
 
 [git_branch]
-format = "[│](bold cyan) [${symbol}${branch}(:${remote_name}/${remote_branch}) ](${style})"
+format = "[|](bold cyan) [${symbol}${branch}(:${remote_name}/${remote_branch}) ](${style})"
 symbol = " "
 always_show_remote = true
 
@@ -84,7 +84,7 @@ behind = " [${count}⇣](red)"
 diverged = " [${ahead_count}⇡ ](green)[${behind_count}⇣ ](red)"
 
 [kubernetes]
-format = '[│](bold cyan) [⛵ $cluster \($namespace\) ](dimmed green)'
+format = '[|](bold cyan) [⛵ $cluster \($namespace\) ](dimmed green)'
 disabled = false
 contexts = [
   { context_pattern = "dev.local.cluster.k8s", style = "green", symbol = "💔 " },
