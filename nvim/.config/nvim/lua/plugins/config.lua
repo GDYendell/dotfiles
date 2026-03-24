@@ -14,6 +14,19 @@ if true then
       opts = { use_diagnostic_signs = true },
     },
 
+    { "nvim-mini/mini.surround", opts = {} },
+
+    {
+      "nvim-lualine/lualine.nvim",
+      opts = function(_, opts)
+        opts.sections.lualine_z = {
+          function()
+            return " "
+          end,
+        }
+      end,
+    },
+
     -- add more treesitter parsers
     {
       "nvim-treesitter/nvim-treesitter",
