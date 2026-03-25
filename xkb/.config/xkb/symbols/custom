@@ -1,0 +1,9 @@
+partial modifier_keys
+xkb_symbols "default" {
+    // Map Right Alt (AltGr) to Super_R
+    key <RALT> {
+        type[group1] = "ONE_LEVEL",
+        symbols[group1] = [ Super_R ]
+    };
+    modifier_map Mod4 { <RALT> };
+};
