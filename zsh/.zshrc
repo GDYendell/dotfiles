@@ -76,3 +76,5 @@ eval "$(zoxide init zsh)"
 eval "$(atuin init zsh)"
 
 eval "$(starship init zsh)"
+source "$HOME/.local/share/zsh/transient-prompt.plugin.zsh"
+TRANSIENT_PROMPT_TRANSIENT_PROMPT='$(starship module character)'
