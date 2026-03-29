@@ -1,0 +1,255 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "active_pane_modifiers": {
+    "border_size": 0.4,
+    "inactive_opacity": 0.8,
+  },
+  "agent_buffer_font_size": 16.0,
+  "agent_servers": {
+    "claude-acp": {
+      "type": "registry",
+    },
+  },
+  "agent_ui_font_size": 15.0,
+  "bottom_dock_layout": "full",
+  "buffer_font_family": "Garosevka",
+  "buffer_font_size": 16.0,
+  "buffer_line_height": "comfortable",
+  "cursor_blink": false,
+  "cursor_shape": "bar",
+  "edit_predictions": {
+    "mode": "subtle",
+    "provider": "zed",
+  },
+  "git": {
+    "inline_blame": {
+      "enabled": true,
+    },
+  },
+  "gutter": {
+    "min_line_number_digits": 1,
+  },
+  "inlay_hints": {
+    "enabled": true,
+    "show_background": true,
+  },
+  "lsp_document_colors": "inlay",
+  "restore_on_startup": "launchpad",
+  "scroll_beyond_last_line": "vertical_scroll_margin",
+  "session": {
+    "restore_unsaved_buffers": true,
+    "trust_all_worktrees": true,
+  },
+  "show_whitespaces": "all",
+  "sticky_scroll": {
+    "enabled": true,
+  },
+  "tab_bar": {
+    "show": false,
+  },
+  "terminal": {
+    "font_size": 14.0,
+    "max_scroll_history_lines": 10000,
+  },
+  "ui_font_family": "Garosevka",
+  "ui_font_size": 14.0,
+  "use_system_path_prompts": false,
+  "use_system_prompts": false,
+  "vertical_scroll_margin": 5.0,
+  "vim": {
+    "toggle_relative_line_numbers": true,
+  },
+  "vim_mode": true,
+  "which_key": {
+    "delay_ms": 100,
+    "enabled": true,
+  },
+  // Theme
+  "theme": {
+    "dark": "Dracula Solid",
+    "light": "Dracula Light (Alucard)",
+    "mode": "dark",
+  },
+  "experimental.theme_overrides": {
+    // Backgrounds
+    // "background": "#282a36",             // unchanged
+    // "editor.background": "#282a36",      // unchanged
+    // "editor.gutter.background": "#282a36", // unchanged
+    "editor.subheader.background": "#282a36",
+    "elevated_surface.background": "#282a36",
+    "panel.background": "#21222c",
+    "status_bar.background": "#21222c",
+    "surface.background": "#282a36",
+    "tab_bar.background": "#21222c",
+    // "tab.active_background": "#282a36",  // unchanged
+    "tab.inactive_background": "#21222c",
+    "terminal.background": "#282a36",
+    "title_bar.background": "#21222c",
+    "title_bar.inactive_background": "#282a36",
+    // "toolbar.background": "#282a36",     // unchanged
+    // Borders
+    "border": "#bd93f955",
+    "pane_group.border": "#bd93f955",
+    "border.focused": "#bd93f977",
+    "border.selected": "#bd93f9bb",
+    "border.variant": "#bd93f9aa",
+    // Foreground / text
+    // "editor.foreground": "#f8f8f2",      // unchanged
+    // "text": "#f8f8f2",                   // unchanged
+    "text.muted": "#bd93f988",
+    "text.placeholder": "#f8f8f299",
+    "text.disabled": "#f8f8f2aa",
+    "text.accent": "#bd93f9",
+    // Icons
+    "icon.accent": "#bd93f9",
+    // "icon.muted": "#aeaea9",             // unchanged
+    // "icon.disabled": "#636361",          // unchanged
+    // "icon.placeholder": "#7c7c79",       // unchanged
+    // Elements
+    "element.background": "#191A21",
+    "element.hover": "#44475a",
+    "element.active": "#bd93f9", // unchanged
+    // "element.selected": "#65547d",       // unchanged
+    // "element.disabled": "#e9dbfd",       // unchanged
+    "drop_target.background": "#44475a",
+    // Ghost elements
+    "ghost_element.hover": "#bd93f911",
+    "ghost_element.active": "#bd93f933",
+    "ghost_element.selected": "#44475a", // box around debug variables
+    // Scrollbar
+    "scrollbar.thumb.background": "#42445099",
+    "scrollbar.thumb.hover_background": "#424450dd",
+    "scrollbar.track.background": "#21222c",
+    "scrollbar.track.border": "#6272a444",
+    // Editor
+    "editor.active_line.background": "#00000000",
+    // "editor.highlighted_line.background": "#44475a", // unchanged
+    "editor.line_number": "#6272a4aa",
+    "editor.active_line_number": "#bd93f9aa",
+    "editor.invisible": "#f8f8f222",
+    "editor.indent_guide": "#f8f8f211",
+    "editor.indent_guide_active": "#bd93f955",
+    // Panels
+    "panel.focused_border": "#bd93f9",
+    // "panel.indent_guide": "#323230",     // unchanged
+    "panel.indent_guide_active": "#bd93f950",
+    "panel.indent_guide_hover": "#bd93f935",
+    "pane.focused_border": "#bd93f9",
+    // Search
+    "search.match_background": "#44475a",
+    // Document highlights (all instances of variable under cursor)
+    "editor.document_highlight.read_background": "#44475a",
+    "editor.document_highlight.write_background": "#44475a",
+    // Links — Cyan
+    // "link_text.hover": "#8be9fd",        // unchanged
+    // Version control
+    "version_control.added": "#50fa7b",
+    "version_control.deleted": "#ff5555",
+    "version_control.modified": "#8be9fd",
+    "version_control.conflict": "#ffb86c",
+    // Diff
+    // "conflict": "#dec184",               // unchanged
+    // "conflict.background": "#dec18433",  // unchanged
+    // "conflict.border": "#5d4c2f",        // unchanged
+    // "created": "#73fb95",                // unchanged
+    // "created.background": "#222e1d",     // unchanged
+    // "created.border": "#38482f",         // unchanged
+    // "deleted.background": "#301b1b",     // unchanged
+    // "deleted.border": "#4c2b2c",         // unchanged
+    // "hidden": "#414754",                 // unchanged
+    "hidden.background": "#21222C",
+    // "hidden.border": "#414754",          // unchanged
+    // "modified": "#a2edfd",               // unchanged
+    "modified.background": "#21222C",
+    // "modified.border": "#a2edfd",        // unchanged
+    "renamed.background": "#21222C",
+    // "predictive": "#c6c6c2",             // unchanged
+    "predictive.background": "#21222C",
+    // "predictive.border": "#c6c6c2",      // unchanged
+    // "unreachable": "#959591",            // unchanged
+    // "unreachable.border": "#959591",     // unchanged
+    // Ignored
+    // "ignored": "#65547d",                // unchanged
+    "ignored.background": "#bd93f955",
+    // "ignored.border": "#65547d",         // unchanged
+    // Status
+    "error": "#ff5555",
+    "error.background": "#21222C",
+    "error.border": "#ff5555",
+    "warning": "#ffb86c",
+    "warning.background": "#21222C",
+    "warning.border": "#ffb86c",
+    "success": "#50fa7b",
+    "success.background": "#21222C",
+    "success.border": "#50fa7b",
+    "info": "#8be9fd",
+    "info.background": "#21222C",
+    "info.border": "#8be9fd",
+    "hint": "#6272a488", // unchanged
+    // "hint.background": "#21222C",
+    // "hint.border": "#6272a4",            // unchanged
+    // Terminal
+    // "terminal.foreground": "#f8f8f2",    // unchanged
+    // "terminal.bright_foreground": "#f9f9f5", // unchanged
+    // "terminal.dim_foreground": "#c6c6c2", // unchanged
+    // "terminal.ansi.background": "#14151b", // unchanged
+    // "terminal.ansi.black": "#21222c",    // unchanged
+    // "terminal.ansi.red": "#ff5555",      // unchanged
+    // "terminal.ansi.green": "#50fa7b",    // unchanged
+    // "terminal.ansi.yellow": "#f1fa8c",   // unchanged
+    "terminal.ansi.blue": "#bd93f9",
+    // "terminal.ansi.magenta": "#ff79c6",  // unchanged
+    // "terminal.ansi.cyan": "#8be9fd",     // unchanged
+    // "terminal.ansi.white": "#f8f8f2",    // unchanged
+    "terminal.ansi.bright_black": "#6272a4",
+    // "terminal.ansi.bright_red": "#ff6e6e", // unchanged
+    // "terminal.ansi.bright_green": "#69ff94", // unchanged
+    // "terminal.ansi.bright_yellow": "#ffffa5", // unchanged
+    // "terminal.ansi.bright_blue": "#d6acff", // unchanged
+    // "terminal.ansi.bright_magenta": "#ff92df", // unchanged
+    // "terminal.ansi.bright_cyan": "#a4ffff", // unchanged
+    // "terminal.ansi.bright_white": "#ffffff", // unchanged
+    // "terminal.ansi.dim_black": "#1a1b23", // unchanged
+    // "terminal.ansi.dim_red": "#cc4444",  // unchanged
+    // "terminal.ansi.dim_green": "#40c862", // unchanged
+    // "terminal.ansi.dim_yellow": "#c1c870", // unchanged
+    // "terminal.ansi.dim_blue": "#7766cc", // unchanged
+    // "terminal.ansi.dim_magenta": "#cc619e", // unchanged
+    // "terminal.ansi.dim_cyan": "#6fbaca", // unchanged
+    // "terminal.ansi.dim_white": "#c6c6c2", // unchanged
+    // Syntax
+    "syntax": {
+      "boolean": { "color": "#bd93f9" },
+      // "comment": { "color": "#6272a4" },       // unchanged
+      "comment.doc": { "color": "#6272a4" },
+      // "constant": { "color": "#bd93f9" },      // unchanged
+      "constructor": { "color": "#50fa7b" },
+      // "enum": { "color": "#bd93f9" },          // unchanged
+      // "function": { "color": "#50fa7b" },      // unchanged
+      // "keyword": { "color": "#ff79c6" },       // unchanged
+      // "number": { "color": "#bd93f9" },        // unchanged
+      // "operator": { "color": "#ff79c6" },      // unchanged
+      // "property": { "color": "#8be9fd" },      // unchanged
+      // "punctuation.bracket": { "color": "#f8f8f2" }, // unchanged
+      // "string": { "color": "#f1fa8c" },        // unchanged
+      // "string.escape": { "color": "#ff79c6" }, // unchanged
+      "string.regex": { "color": "#ffb86c" },
+      // "tag": { "color": "#ff79c6" },           // unchanged
+      // "type": { "color": "#8be9fd" },          // unchanged
+      // "variable": { "color": "#f8f8f2" },      // unchanged
+      // "variable.special": { "color": "#bd93f9" }, // unchanged
+    },
+    "vim.normal.background": "#bd93f9",
+    "vim.normal.foreground": "#282a36",
+    "vim.insert.background": "#50fa7b",
+    "vim.insert.foreground": "#282a36",
+    "vim.replace.foreground": "#282a36",
+  },
+}

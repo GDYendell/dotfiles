@@ -1,0 +1,115 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  // Anywhere
+  {
+    "bindings": {
+      "ctrl-b": "workspace::ToggleLeftDock",
+      "ctrl-shift-b": "workspace::ToggleRightDock",
+      "ctrl-/": "workspace::ToggleBottomDock",
+      "ctrl-1": "editor::ToggleFocus",
+      "ctrl-j": "workspace::ActivatePaneLeft",
+      "ctrl-k": "workspace::ActivatePaneDown",
+      "ctrl-l": "workspace::ActivatePaneUp",
+      "ctrl-;": "workspace::ActivatePaneRight",
+      "ctrl-w": null,
+      "alt-z": "workspace::ToggleZoom",
+      "alt-shift-z": "workspace::ZoomIn",
+      "ctrl-alt-g": ["task::Spawn", { "task_name": "lazygit" }], // For "space g g"
+      "ctrl-shift-q": "zed::Quit",
+    },
+  },
+  // Anywhere, except in an Editor, unless in normal mode
+  {
+    "context": "((!Terminal || vi_mode) && (!Editor || vim_mode == normal))",
+    "bindings": {
+      "space space": "file_finder::Toggle",
+      "space g d": "debug_panel::ToggleFocus",
+      "space g e": "project_panel::ToggleFocus",
+      "space g g": ["workspace::SendKeystrokes", "ctrl-alt-g alt-shift-z"],
+      "space g o": "outline_panel::ToggleFocus",
+      "space g t": "terminal_panel::ToggleFocus",
+      "space g T": "workspace::NewTerminal",
+      "space /": ["workspace::SendKeystrokes", "ctrl-shift-f alt-shift-z"],
+      "space a a": ["agent::ToggleFocus", "agent::AllowOnce"],
+      "space a A": ["agent::ToggleFocus", "agent::AllowAlways"],
+      "space a r": ["agent::ToggleFocus", "agent::RejectOnce"],
+      "space q q": "zed::Quit",
+    },
+  },
+  // Any Pane, except Editor, unless in normal mode
+  {
+    "context": "((Pane && !Editor) || (Editor && vim_mode == normal))",
+    "bindings": {
+      "space b d": "pane::CloseActiveItem",
+      "space b j": [
+        "workspace::MoveItemToPaneInDirection",
+        { "direction": "left" },
+      ],
+      "space b k": [
+        "workspace::MoveItemToPaneInDirection",
+        { "direction": "down" },
+      ],
+      "space b l": [
+        "workspace::MoveItemToPaneInDirection",
+        { "direction": "up" },
+      ],
+      "space b ;": [
+        "workspace::MoveItemToPaneInDirection",
+        { "direction": "right" },
+      ],
+    },
+  },
+  {
+    "context": "Editor && vim_mode == insert",
+    "bindings": {
+      // "j k": "vim::NormalBefore"
+      "ctrl-s": ["workspace::SendKeystrokes", "escape ctrl-s"],
+      "ctrl-z": null,
+    },
+  },
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "space x x": "diagnostics::Deploy",
+      "space x X": ["diagnostics::Deploy", { "current_file": true }],
+      "space u h": "editor::ToggleInlayHints",
+      "space u d": "editor::ToggleInlineDiagnostics",
+      "n": "search::SelectNextMatch",
+      "shift-n": "search::SelectPreviousMatch",
+      "ctrl-s": "workspace::Save",
+      "ctrl-h": "editor::Hover",
+      "alt-/": "buffer_search::DeployReplace",
+      "j": "vim::Left",
+      "k": "vim::Down",
+      "l": "vim::Up",
+      ";": "vim::Right",
+    },
+  },
+  {
+    "context": "(AgentPanel && vim_mode == normal)",
+    "bindings": {
+      "space a a": "agent::AllowOnce",
+      "space a A": "agent::AllowAlways",
+      "space a r": "agent::Reject",
+    },
+  },
+  {
+    "context": "DebugPanel",
+    "bindings": {
+      "ctrl-tab": "pane::ActivateNextItem",
+      "ctrl-shift-tab": "pane::ActivatePreviousItem",
+    },
+  },
+  {
+    "context": "(BufferSearchBar || ProjectSearchBar)",
+    "bindings": {
+      "alt-/": "search::ToggleReplace",
+    },
+  },
+]
