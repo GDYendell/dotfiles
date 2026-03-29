@@ -27,6 +27,42 @@ if true then
       end,
     },
 
+    -- stylua: ignore start
+    {
+      "snacks.nvim",
+      opts = {
+        terminal = {
+          win = {
+            keys = {
+              nav_h = { "<C-j>", function(self) return self:is_floating() and "<C-j>" or vim.schedule(function() vim.cmd.wincmd("h") end) end, desc = "Go to Left Window",  expr = true, mode = "t" },
+              nav_j = { "<C-k>", function(self) return self:is_floating() and "<C-k>" or vim.schedule(function() vim.cmd.wincmd("j") end) end, desc = "Go to Lower Window", expr = true, mode = "t" },
+              nav_k = { "<C-l>", function(self) return self:is_floating() and "<C-l>" or vim.schedule(function() vim.cmd.wincmd("k") end) end, desc = "Go to Upper Window",  expr = true, mode = "t" },
+              nav_l = { "<C-;>", function(self) return self:is_floating() and "<C-;>" or vim.schedule(function() vim.cmd.wincmd("l") end) end, desc = "Go to Right Window", expr = true, mode = "t" },
+            },
+          },
+        },
+      },
+    },
+    -- stylua: ignore end
+
+    {
+      "folke/noice.nvim",
+      opts = {
+        presets = {
+          lsp_doc_border = true,
+        },
+      },
+    },
+
+    {
+      "saghen/blink.cmp",
+      opts = {
+        sources = {
+          default = { "lsp", "path" },
+        },
+      },
+    },
+
     -- add more treesitter parsers
     {
       "nvim-treesitter/nvim-treesitter",
@@ -50,120 +86,26 @@ if true then
       },
     },
 
-    -- Use <tab> for completion and snippets (supertab)
-    -- first: disable default <tab> and <s-tab> behavior in LuaSnip
-    {
-      "L3MON4D3/LuaSnip",
-      keys = function()
-        return {}
-      end,
-    },
-    -- then: setup supertab in cmp
-    {
-      "hrsh7th/nvim-cmp",
-      dependencies = {
-        "hrsh7th/cmp-emoji",
-      },
-      ---@param opts cmp.ConfigSchema
-      opts = function(_, opts)
-        local has_words_before = function()
-          unpack = unpack or table.unpack
-          local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-          return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-        end
-
-        local luasnip = require("luasnip")
-        local cmp = require("cmp")
-
-        opts.mapping = vim.tbl_extend("force", opts.mapping, {
-          ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_next_item()
-              -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
-              -- this way you will only jump inside the snippet region
-            elseif luasnip.expand_or_jumpable() then
-              luasnip.expand_or_jump()
-            elseif has_words_before() then
-              cmp.complete()
-            else
-              fallback()
-            end
-          end, { "i", "s" }),
-          ["<S-Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-              luasnip.jump(-1)
-            else
-              fallback()
-            end
-          end, { "i", "s" }),
-        })
-      end,
-    },
+    -- {
+    --   "greggh/claude-code.nvim",
+    --   dependencies = {
+    --     "nvim-lua/plenary.nvim", -- Required for git operations
+    --   },
+    --   config = function()
+    --     require("claude-code").setup({
+    --       window = {
+    --         position = "float",
+    --         float = {
+    --           width = "90%", -- Take up 90% of the editor width
+    --           height = "90%", -- Take up 90% of the editor height
+    --           row = "center", -- Center vertically
+    --           col = "center", -- Center horizontally
+    --           relative = "editor",
+    --           border = "double", -- Use double border style
+    --         },
+    --       },
+    --     })
+    --   end,
+    -- },
   }
 end
-
--- every spec file under the "plugins" directory will be loaded automatically by lazy.nvim
---
--- In your plugin files, you can:
--- * add extra plugins
--- * disable/enabled LazyVim plugins
--- * override the configuration of LazyVim plugins
-return {
-  -- override nvim-cmp and add cmp-emoji
-  {
-    "hrsh7th/nvim-cmp",
-    dependencies = { "hrsh7th/cmp-emoji" },
-    ---@param opts cmp.ConfigSchema
-    opts = function(_, opts)
-      table.insert(opts.sources, { name = "emoji" })
-    end,
-  },
-
-  -- add pyright to lspconfig
-  {
-    "neovim/nvim-lspconfig",
-    ---@class PluginLspOpts
-    opts = {
-      ---@type lspconfig.options
-      servers = {
-        -- pyright will be automatically installed with mason and loaded with lsponfig
-        pyright = {},
-      },
-    },
-  },
-
-  -- the opts function can also be used to change the default opts:
-  {
-    "nvim-lualine/lualine.nvim",
-    event = "VeryLazy",
-    opts = function(_, opts)
-      table.insert(opts.sections.lualine_x, "😄")
-    end,
-  },
-
-  -- or you can return new options to override all the defaults
-  {
-    "nvim-lualine/lualine.nvim",
-    event = "VeryLazy",
-    opts = function()
-      return {
-        --[[add your custom lualine config here]]
-      }
-    end,
-  },
-
-  -- add any tools you want to have installed below
-  {
-    "williamboman/mason.nvim",
-    opts = {
-      ensure_installed = {
-        "stylua",
-        "shellcheck",
-        "shfmt",
-        "flake8",
-      },
-    },
-  },
-}

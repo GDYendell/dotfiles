@@ -7,3 +7,5 @@ local opt = vim.opt
 opt.scrolloff = 10 -- Lines of context
 opt.cursorline = false -- Disable full line highlight
 vim.g.root_spec = "cwd" -- File search and grep only from launch directory
+
+vim.diagnostic.config({ float = { border = "rounded" } })
