@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -46,21 +46,19 @@ source $ZSH/oh-my-zsh.sh
 # - $ZSH_CUSTOM/macos.zsh
 # For a full list of active aliases, run `alias`.
 
-alias ls='ls --color=auto'
-alias ll='ls -l'
-alias less='less -S -M -z-5 -W'
-alias cdn='cd $(\ls -1dt ./*/ | head -n 1)'
-alias make='rederr make || make'
-alias remake="make $@ clean uninstall && make $@"
+alias ls="eza -la --group-directories-first --icons=auto"
+alias lsn="ls --sort newest"
+alias lt="eza --tree"
+alias fd="fd --hidden $@"
 alias lg="lazygit $@"
-alias vimr="vim -R $@"
 alias mansearch='man $(apropos --long . | dmenu -i -l 30 | awk '\''{print $2, $1}'\'' | tr -d '\''()'\'')'
-alias dotfiles="/usr/bin/git --git-dir=$HOME/dotfiles.git/ --work-tree=$HOME"
 alias kc="kubectl"
 alias kc-ns='kubectl config set-context --current --namespace $1'
 alias x="startx"
 alias h="uwsm start -g -1 -D Hyprland hyprland.desktop"
 alias tmks="tmux kill-server"
+alias grep="echo 'Use rg!'; grep $@"
+alias find="echo 'Use fd!'; find $@"
 
 function repeat() {
   fc -$1 -1
@@ -69,9 +67,12 @@ function tldr {
   curl cht.sh/${1} | less -r
 }
 
+# Dracula fzf
+export FZF_DEFAULT_OPTS='--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 --color=info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6 --color=marker:#ff79c6,spinner:#ffb86c,header:#6272a4'
+
 # Startup commands
 
-eval "$(zoxide init zsh)"
+eval "$(zoxide init --cmd cd zsh)"
 
 eval "$(atuin init zsh)"
 
