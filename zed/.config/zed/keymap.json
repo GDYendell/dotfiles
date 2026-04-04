@@ -21,6 +21,7 @@
       "alt-z": "workspace::ToggleZoom",
       "alt-shift-z": "workspace::ZoomIn",
       "ctrl-alt-g": ["task::Spawn", { "task_name": "lazygit" }], // For "space g g"
+      "ctrl-alt-f": ["task::Spawn", { "task_name": "fzf" }], // For "space g f"
       "ctrl-shift-q": "zed::Quit",
     },
   },
@@ -32,6 +33,7 @@
       "space g d": "debug_panel::ToggleFocus",
       "space g e": "project_panel::ToggleFocus",
       "space g g": ["workspace::SendKeystrokes", "ctrl-alt-g alt-shift-z"],
+      "space g f": ["workspace::SendKeystrokes", "ctrl-alt-f alt-shift-z"],
       "space g o": "outline_panel::ToggleFocus",
       "space g t": "terminal_panel::ToggleFocus",
       "space g T": "workspace::NewTerminal",

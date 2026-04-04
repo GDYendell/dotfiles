@@ -52,6 +52,15 @@
     // "tags": []
   },
   {
+    "label": "fzf",
+    "command": "fzf --preview 'bat --color=always --style=numbers --line-range :500 {}' | xargs -r zed",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "reveal_target": "center",
+    "hide": "always",
+  },
+  {
     "label": "lazygit",
     "command": "lazygit",
     "use_new_terminal": false,
