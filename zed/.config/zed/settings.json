@@ -11,16 +11,16 @@
     "border_size": 0.4,
     "inactive_opacity": 0.8,
   },
-  "agent_buffer_font_size": 16.0,
+  "agent_buffer_font_size": 20.0,
   "agent_servers": {
     "claude-acp": {
       "type": "registry",
     },
   },
-  "agent_ui_font_size": 15.0,
+  "agent_ui_font_size": 20.0,
   "bottom_dock_layout": "full",
   "buffer_font_family": "Garosevka",
-  "buffer_font_size": 16.0,
+  "buffer_font_size": 26.0,
   "buffer_line_height": "comfortable",
   "cursor_blink": false,
   "cursor_shape": "bar",
@@ -55,11 +55,11 @@
     "show": false,
   },
   "terminal": {
-    "font_size": 14.0,
+    "font_size": 22.0,
     "max_scroll_history_lines": 10000,
   },
   "ui_font_family": "Garosevka",
-  "ui_font_size": 14.0,
+  "ui_font_size": 22.0,
   "use_system_path_prompts": false,
   "use_system_prompts": false,
   "vertical_scroll_margin": 5.0,
@@ -67,6 +67,17 @@
     "toggle_relative_line_numbers": true,
   },
   "vim_mode": true,
+  "profiles": {
+    "Laptop": {
+      "agent_buffer_font_size": 16.0,
+      "agent_ui_font_size": 14.0,
+      "buffer_font_size": 16.0,
+      "terminal": {
+        "font_size": 14.0,
+      },
+      "ui_font_size": 14.0,
+    },
+  },
   "which_key": {
     "delay_ms": 100,
     "enabled": true,
