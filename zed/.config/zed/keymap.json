@@ -17,7 +17,7 @@
       "ctrl-k": "workspace::ActivatePaneDown",
       "ctrl-l": "workspace::ActivatePaneUp",
       "ctrl-;": "workspace::ActivatePaneRight",
-      "ctrl-w": null,
+      "ctrl-w": "pane::CloseActiveItem",
       "alt-z": "workspace::ToggleZoom",
       "alt-shift-z": "workspace::ZoomIn",
       "ctrl-alt-g": ["task::Spawn", { "task_name": "lazygit" }], // For "space g g"
@@ -42,13 +42,15 @@
       "space a A": ["agent::ToggleFocus", "agent::AllowAlways"],
       "space a r": ["agent::ToggleFocus", "agent::RejectOnce"],
       "space q q": "zed::Quit",
+      "space a d": "agent::OpenAgentDiff",
     },
   },
   // Any Pane, except Editor, unless in normal mode
   {
-    "context": "((Pane && !Editor) || (Editor && vim_mode == normal))",
+    "context": "((Pane && !Editor && !Terminal) || (Editor && vim_mode == normal))",
     "bindings": {
       "space b d": "pane::CloseActiveItem",
+      "space p d": "pane::CloseActiveItem",
       "space b j": [
         "workspace::MoveItemToPaneInDirection",
         { "direction": "left" },
