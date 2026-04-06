@@ -1,9 +1,9 @@
 [Desktop Entry]
 Name=Obsidian
-Exec=/home/gdy/bin/obsidian.sh
+Exec=/home/gdy/bin/obsidian.sh %U
 Terminal=false
 Type=Application
-Icon=obsidian.png
+Icon=obsidian
 StartupWMClass=obsidian
 Comment=Obsidian
 MimeType=x-scheme-handler/obsidian;
