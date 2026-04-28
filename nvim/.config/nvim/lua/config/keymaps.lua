@@ -46,6 +46,18 @@ vim.keymap.set({ "n", "x" }, "L", "<nop>")
 
 vim.keymap.set("n", "X", "<leader>cd", { remap = true })
 
+-- Yank file path to system clipboard
+vim.keymap.set("n", "yp", function()
+  local path = vim.fn.expand("%") .. ":" .. vim.fn.line(".")
+  vim.fn.setreg("+", path)
+  vim.notify("Yanked: " .. path)
+end, { desc = "Yank Relative Path" })
+vim.keymap.set("n", "yP", function()
+  local path = vim.fn.expand("%:p") .. ":" .. vim.fn.line(".")
+  vim.fn.setreg("+", path)
+  vim.notify("Yanked: " .. path)
+end, { desc = "Yank Absolute Path" })
+
 -- Move current buffer to a neighboring window, creating a split if none exists
 local function move_to_split(direction)
   local buf = vim.api.nvim_get_current_buf()
