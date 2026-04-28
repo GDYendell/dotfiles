@@ -20,17 +20,9 @@ vim.keymap.set("n", "<F3>",  function() require("dapui").eval(nil, { enter = tru
 -- Use Enter for command mode
 vim.keymap.set("n", "<CR>", ":", { desc = "Command Mode", remap = false })
 
--- Use i3 movements
-vim.keymap.set({ "n", "x" }, "j", "<Left>")
-vim.keymap.set({ "n", "x" }, "k", "<Down>")
-vim.keymap.set({ "n", "x" }, "l", "<Up>")
-vim.keymap.set({ "n", "x" }, ";", "<Right>")
+-- Use i3 movements via vim-tmux-navigator
 vim.keymap.set({ "n", "x" }, "h", "<nop>")
 
-vim.keymap.set({ "n", "t" }, "<C-j>", "<C-w>h", { desc = "Go to Left Window", remap = false })
-vim.keymap.set({ "n", "t" }, "<C-k>", "<C-w>j", { desc = "Go to Lower Window", remap = false })
-vim.keymap.set({ "n", "t" }, "<C-l>", "<C-w>k", { desc = "Go to Upper Window", remap = false })
-vim.keymap.set({ "n", "t" }, "<C-;>", "<C-w>l", { desc = "Go to Right Window", remap = false })
 vim.keymap.set({ "n", "t" }, "<C-h>", "<nop>")
 
 vim.keymap.set("n", "<M-Down>", "<cmd>m .+1<cr>==", { desc = "Move Down" })

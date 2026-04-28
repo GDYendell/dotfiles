@@ -86,6 +86,28 @@ if true then
       },
     },
 
+    {
+      "christoomey/vim-tmux-navigator",
+      init = function()
+        vim.g.tmux_navigator_no_mappings = 1
+      end,
+      cmd = {
+        "TmuxNavigateLeft",
+        "TmuxNavigateDown",
+        "TmuxNavigateUp",
+        "TmuxNavigateRight",
+        "TmuxNavigatePrevious",
+        "TmuxNavigatorProcessList",
+      },
+      keys = {
+        { "<c-j>", "<cmd>TmuxNavigateLeft<cr>", mode = { "n", "t" } },
+        { "<c-k>", "<cmd>TmuxNavigateDown<cr>", mode = { "n", "t" } },
+        { "<c-l>", "<cmd>TmuxNavigateUp<cr>", mode = { "n", "t" } },
+        { "<c-;>", "<cmd>TmuxNavigateRight<cr>", mode = { "n", "t" } },
+        { "<c-tab>", "<cmd>TmuxNavigatePrevious<cr>", mode = { "n", "t" } },
+      },
+    },
+
     -- {
     --   "greggh/claude-code.nvim",
     --   dependencies = {
