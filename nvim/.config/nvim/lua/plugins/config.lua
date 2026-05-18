@@ -14,6 +14,15 @@ if true then
       opts = { use_diagnostic_signs = true },
     },
 
+    {
+      "nvim-neotest/neotest",
+      opts = {
+        floating = {
+          border = "rounded",
+        },
+      },
+    },
+
     { "nvim-mini/mini.surround", opts = {} },
 
     {
@@ -105,6 +114,22 @@ if true then
         { "<c-l>", "<cmd>TmuxNavigateUp<cr>", mode = { "n", "t" } },
         { "<c-;>", "<cmd>TmuxNavigateRight<cr>", mode = { "n", "t" } },
         { "<c-tab>", "<cmd>TmuxNavigatePrevious<cr>", mode = { "n", "t" } },
+      },
+    },
+
+    {
+      "lewis6991/gitsigns.nvim",
+      opts = {
+        current_line_blame = true,
+      },
+    },
+
+    {
+      "mrcjkb/rustaceanvim",
+      opts = {
+        server = {
+          cmd = { "rustup", "run", "nightly", "rust-analyzer" },
+        },
       },
     },
 
