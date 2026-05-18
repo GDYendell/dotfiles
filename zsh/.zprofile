@@ -1,9 +1,6 @@
 export PATH=$PATH:/home/gdy/.cargo/bin
 
-. "$HOME/.local/bin/env"
-
-# Use consistent socket to share. HOSTNAME in case of networked HOME.
-export SSH_AUTH_SOCK=$HOME/.ssh/ssh-agent.$HOSTNAME.sock
+export SSH_AUTH_SOCK=$HOME/.ssh/ssh-agent.sock
 
 # Return 0 -> running with keys, 1 -> running but no keys, else needs starting
 ssh-add -l 2>/dev/null >/dev/null
