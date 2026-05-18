@@ -3,3 +3,5 @@ os:
 git:
   allBranchesLogCmds:
     - "git log --all --decorate --oneline --graph --color=always"
+  pagers:
+    - pager: delta --dark --paging=never
