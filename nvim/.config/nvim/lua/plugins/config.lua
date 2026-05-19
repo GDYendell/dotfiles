@@ -72,6 +72,31 @@ if true then
       },
     },
 
+    { "rickhowe/diffchar.vim" },
+
+    {
+      "pwntester/octo.nvim",
+      cmd = "Octo",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        "nvim-tree/nvim-web-devicons",
+      },
+      opts = {
+        picker = "fzf-lua",
+      },
+      init = function()
+        vim.api.nvim_create_autocmd("ColorScheme", {
+          pattern = "*",
+          callback = function()
+            vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#1a3a1a", fg = "#50fa7b" })
+            vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#3a1a1a", fg = "#ff5555" })
+            vim.api.nvim_set_hl(0, "DiffChange", { bg = "#1a1a3a", fg = "#8be9fd" })
+            vim.api.nvim_set_hl(0, "DiffText", { bg = "#2a2a5a", fg = "#f8f8f2", bold = true })
+          end,
+        })
+      end,
+    },
+
     -- add more treesitter parsers
     {
       "nvim-treesitter/nvim-treesitter",
