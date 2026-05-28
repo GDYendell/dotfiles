@@ -32,7 +32,8 @@ vim.keymap.set("i", "<M-Up>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move Up" })
 vim.keymap.set("v", "<M-Down>", ":m '>+1<cr>gv=gv", { desc = "Move Down" })
 vim.keymap.set("v", "<M-Up>", ":m '<-2<cr>gv=gv", { desc = "Move Up" })
 
-vim.keymap.set("n", "<Tab>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
+-- TIL <Tab> == <C-i> so this breaks jumplist forward...
+-- vim.keymap.set("n", "<Tab>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 vim.keymap.set({ "n", "x" }, "H", "<nop>")
 vim.keymap.set({ "n", "x" }, "L", "<nop>")
 
