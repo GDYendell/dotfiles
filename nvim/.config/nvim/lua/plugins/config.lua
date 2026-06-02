@@ -97,6 +97,11 @@ if true then
       end,
     },
 
+    {
+      "nvim-treesitter/nvim-treesitter-context",
+      opts = { max_lines = 0 },
+    },
+
     -- add more treesitter parsers
     {
       "nvim-treesitter/nvim-treesitter",
