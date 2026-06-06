@@ -39,6 +39,8 @@ export LC_ALL=en_GB.UTF-8
 #   export EDITOR='nvim'
 # fi
 
+DOCKER_HOST=unix://$XDG_RUNTIME_DIR/podman/podman.sock
+
 # Set personal aliases, overriding those provided by Oh My Zsh libs,
 # plugins, and themes. Aliases can be placed here, though Oh My Zsh
 # users are encouraged to define aliases within a top-level file in
