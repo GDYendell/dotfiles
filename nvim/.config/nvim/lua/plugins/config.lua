@@ -40,6 +40,11 @@ if true then
     {
       "snacks.nvim",
       opts = {
+        lazygit = {
+          win = {
+            border = "rounded",
+          },
+        },
         terminal = {
           win = {
             keys = {
