@@ -33,6 +33,8 @@ if true then
             return " "
           end,
         }
+        -- Don't truncate file path; index 4 = pretty_path in LazyVim's default lualine_c
+        opts.sections.lualine_c[4] = { require("lazyvim.util").lualine.pretty_path({ length = 0 }) }
       end,
     },
 
