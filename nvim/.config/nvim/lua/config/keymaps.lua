@@ -17,8 +17,8 @@ vim.keymap.set("n", "<F17>", function() require("dap").run_to_cursor() end,     
 vim.keymap.set("n", "<F3>",  function() require("dapui").eval(nil, { enter = true }) end,               { desc = "Debug: Eval" }) ---@diagnostic disable-line: missing-fields
 -- stylua: ignore end
 
--- Use Enter for command mode
-vim.keymap.set("n", "<CR>", ":", { desc = "Command Mode", remap = false })
+-- Use Space-Enter for command mode
+vim.keymap.set("n", "<leader><CR>", ":", { desc = "Command Mode", remap = false })
 
 -- Use i3 movements via vim-tmux-navigator
 vim.keymap.set({ "n", "x" }, "h", "<nop>")
