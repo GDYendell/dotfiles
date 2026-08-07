@@ -154,8 +154,8 @@ if [ -z "$ROWS" ]; then
 fi
 
 # Slurp into parallel arrays. T_* = pull requests, D_* = deploy approvals.
-declare -a T_thread T_reason T_repo T_num T_title
-declare -a D_thread D_repo D_title
+declare -a T_thread=() T_reason=() T_repo=() T_num=() T_title=()
+declare -a D_thread=() D_repo=() D_title=()
 n=0
 dn=0
 while IFS=$'\t' read -r ntype thread_id reason repo title url; do
@@ -182,14 +182,14 @@ done <<<"$ROWS"
 # aliased pullRequest() node per PR (alias p<index>). Fetches PR state (to spot
 # merged PRs), requested reviewers (users + teams) and review authors in a single
 # round trip, replacing the old per-PR REST calls.
-declare -A repo_prs
+declare -A repo_prs=()
 have_pr=0
 for ((j = 0; j < n; j++)); do
   have_pr=1
   repo_prs[${T_repo[j]}]+=" $j"
 done
 
-declare -A RR_ok RR_state RR_reqme RR_doneme RR_revs
+declare -A RR_ok=() RR_state=() RR_reqme=() RR_doneme=() RR_revs=()
 if [ "$have_pr" -eq 1 ]; then
   prf='state reviewRequests(first:100){nodes{requestedReviewer{__typename ... on User{login} ... on Team{slug}}}} reviews(first:100){nodes{author{login}}}'
   q="query {"
@@ -239,8 +239,8 @@ resolved=0
 deploy=0
 unknown=0
 failed=0
-declare -a jobs # entries: "U:<thread>" (unsub+done) or "D:<thread>" (done)
-declare -A label_of
+declare -a jobs=() # entries: "U:<thread>" (unsub+done) or "D:<thread>" (done)
+declare -A label_of=()
 
 for ((j = 0; j < n; j++)); do
   repo=${T_repo[j]}
@@ -266,7 +266,7 @@ for ((j = 0; j < n; j++)); do
   fi
 
   # Non-review-request notifications (open) are always kept.
-  if [ "$reason" != "review_requested" ]; then
+  if [ "$reason" != "review_requested" ] && [ "$reason" != "team_mention" ]; then
     keep=$((keep + 1))
     echo "${GREEN}✓ keep${RESET} ${BOLD}$repo · #$num${RESET} $title · ${DIM}$pr_url${RESET}"
     echo "    ${DIM}kept: reason=$reason${RESET}"
