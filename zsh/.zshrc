@@ -54,6 +54,7 @@ alias lsn="ls --sort newest"
 alias lt="eza --tree"
 alias fd="fd --hidden $@"
 alias lg="lazygit $@"
+alias cdg='cd "$(git rev-parse --show-toplevel)"'
 alias mansearch='man $(apropos --long . | dmenu -i -l 30 | awk '\''{print $2, $1}'\'' | tr -d '\''()'\'')'
 alias kc="kubectl"
 alias kc-ns='kubectl config set-context --current --namespace $1'
