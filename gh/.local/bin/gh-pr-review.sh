@@ -157,7 +157,12 @@ draft_body() {
     # The range runs from the first separator to the end, so a body containing
     # one keeps it; dropping the first line drops the separator itself.
     sed -n "/^$DRAFT_SEPARATOR\$/,\$p" "$draft" | tail -n +2
-    rm -f "$draft"
+}
+
+# Removes the draft, which is only done once its body has been posted, so that
+# the writing survives a failure to post it.
+discard_draft() {
+    rm -f "$(repo_root)/$DRAFT_FILE"
 }
 
 # Echoes the body given as arguments, read from stdin for "-", or drafted in the
@@ -172,13 +177,18 @@ read_body() {
     fi
 }
 
+# Sets REVIEW_ID from the pending review of the loaded state. Called before a
+# comment is drafted, so that a missing review is reported before the writing
+# rather than after it.
+load_review_id() {
+    REVIEW_ID=$(pending_review_id "$OWNER" "$REPO" "$PR")
+    [[ -n $REVIEW_ID ]] ||
+        exit_with_message "No pending review on $OWNER/$REPO#$PR; run --review $PR first"
+}
+
 # Adds a thread at the parsed location to the pending review of the loaded state.
 add_thread() {
     local body=$1
-
-    local review_id
-    review_id=$(pending_review_id "$OWNER" "$REPO" "$PR")
-    [[ -n $review_id ]] || exit_with_message "No pending review on $OWNER/$REPO#$PR; run --review $PR again"
 
     # The start of a range is only declared when there is one, because GitHub
     # rejects a startLine equal to line.
@@ -190,7 +200,7 @@ add_thread() {
     fi
 
     gh api graphql --silent \
-        -f reviewId="$review_id" -f path="$FILE_PATH" -F line="$LINE" -f body="$body" \
+        -f reviewId="$REVIEW_ID" -f path="$FILE_PATH" -F line="$LINE" -f body="$body" \
         "${start_arg[@]}" \
         -f query='
             mutation($reviewId: ID!, $path: String!, $line: Int!, $body: String!'"$start_decl"') {
@@ -209,12 +219,17 @@ cmd_comment() {
     parse_location "${1-}"
     shift || true
     load_state
+    load_review_id
 
     local body
     body=$(read_body "$@")
-    [[ -n $body ]] || exit_with_message "empty comment body"
+    if [[ -z $body ]]; then
+        discard_draft
+        exit_with_message "empty comment body"
+    fi
 
     add_thread "$body"
+    discard_draft
     echo "Commented on $FILE_PATH:${START_LINE:+$START_LINE-}$LINE in $OWNER/$REPO#$PR"
 }
 
@@ -222,6 +237,7 @@ cmd_suggest() {
     parse_location "${1-}"
     (($# <= 1)) || exit_with_message "--suggest takes only <location>; the suggestion is written in an editor"
     load_state
+    load_review_id
 
     # The block is seeded with the lines being commented on, taken from the
     # working tree, so it is only correct if that is checked out at the PR head.
@@ -236,9 +252,13 @@ cmd_suggest() {
     # The body is used verbatim, so that prose can be written around the block.
     local template=$'```suggestion\n'"$code"$'\n```' body
     body=$(draft_body "$template")
-    [[ -n $body && $body != "$template" ]] || exit_with_message "empty suggestion"
+    if [[ -z $body || $body == "$template" ]]; then
+        discard_draft
+        exit_with_message "empty suggestion"
+    fi
 
     add_thread "$body"
+    discard_draft
     echo "Suggested a change to $FILE_PATH:${START_LINE:+$START_LINE-}$LINE in $OWNER/$REPO#$PR"
 }
 
