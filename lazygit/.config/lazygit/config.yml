@@ -5,3 +5,7 @@ git:
     - "git log --all --decorate --oneline --graph --color=always"
   diffRenderers:
     - command: delta --dark --paging=never
+keybinding:
+  commits:
+    moveUpCommit: [<ctrl-up>]
+    moveDownCommit: [<ctrl-down>]
