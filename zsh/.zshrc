@@ -61,8 +61,11 @@ alias kc-ns='kubectl config set-context --current --namespace $1'
 alias x="startx"
 alias h="uwsm start -g -1 -D Hyprland hyprland.desktop"
 alias tmks="tmux kill-server"
-alias grep="echo 'Use rg!'; grep $@"
-alias find="echo 'Use fd!'; find $@"
+
+if [[ -o interactive ]]; then
+  grep() { echo 'Use rg!' >&2; command grep "$@"; }
+  find() { echo 'Use fd!' >&2; command find "$@"; }
+fi
 
 function repeat() {
   fc -$1 -1
