@@ -6,105 +6,185 @@
 // To see the default key bindings run `zed: open default keymap`
 // from the command palette.
 [
-  // Anywhere
+  // Unbind keybinds using leader sequences
   {
     "bindings": {
-      "ctrl-b": "workspace::ToggleLeftDock",
-      "ctrl-shift-b": "workspace::ToggleRightDock",
-      "ctrl-/": "workspace::ToggleBottomDock",
-      "ctrl-1": "editor::ToggleFocus",
+      "space": null,
+      "space y": null,
+      "ctrl-w": null,
+      "ctrl-a": null,
+      "ctrl-,": null,
+    }
+  },
+  // Anywhere
+  {
+    "context": "",
+    "bindings": {
+      "ctrl-shift-q": "zed::Quit",
+      "ctrl-w ctrl-q": "pane::CloseActiveItem",
+      "ctrl-alt-h": "multi_workspace::ToggleWorkspaceSidebar",
+      "ctrl-alt-j": "workspace::ToggleLeftDock",
+      "ctrl-alt-k": "workspace::ToggleBottomDock",
+      "ctrl-alt-l": "workspace::ToggleZoom",
+      "ctrl-alt-;": "workspace::ToggleRightDock",
+      "ctrl-alt-'": "workspace::ToggleEditorZoom",
+      "ctrl-alt-g": "git_panel::Toggle",
+      "ctrl-alt-e": "project_panel::Toggle",
+      "ctrl-alt-o": "outline_panel::Toggle",
+      "ctrl-alt-p": "workspace::MoveFocusedPanelToNextPosition",
+      "alt-shift-z": "workspace::ZoomIn",
       "ctrl-j": "workspace::ActivatePaneLeft",
       "ctrl-k": "workspace::ActivatePaneDown",
       "ctrl-l": "workspace::ActivatePaneUp",
       "ctrl-;": "workspace::ActivatePaneRight",
-      "ctrl-w": "pane::CloseActiveItem",
-      "alt-z": "workspace::ToggleZoom",
-      "alt-shift-z": "workspace::ZoomIn",
-      "ctrl-alt-g": [
+      "ctrl-a ctrl-p": "projects::OpenRecent",
+      "ctrl-a ctrl-s": "git::Worktree",
+      "ctrl-a ctrl-b": "git::Branch",
+      // For "space g g"
+      "ctrl-alt-shift-g": [
         "task::Spawn",
         {
-          "task_name": "lazygit"
-        }
-      ], // For "space g g"
-      "ctrl-alt-f": [
-        "task::Spawn",
+          "task_name": "lazygit",
+        },
+      ],
+      // SendKeystrokes components
+      "ctrl-alt-shift-f": ["task::Spawn", { "task_name": "fzf" }],
+      "ctrl-alt-shift-r": ["task::Spawn", { "task_name": "Add Review Comment" }],
+      "ctrl-alt-shift-s": ["task::Spawn", { "task_name": "Add Review Comment With Suggestion" }],
+    },
+    "unbind": {
+      "ctrl-q": "zed::Quit",
+      "alt-shift-w": "git::Worktree",
+      "ctrl-r": "projects::OpenRecent",
+      "ctrl-shift-c": "collab_panel::ToggleFocus"
+    },
+  },
+  {
+    "context": "Pane",
+    "bindings": {
+      "ctrl-w o": ["pane::CloseOtherItems", {"close_pinned": false}],
+      "ctrl-w i": "workspace::CloseInactiveTabsAndPanes"
+    },
+    "unbind": {
+      "ctrl-w o": "workspace::CloseInactiveTabsAndPanes",
+      "ctrl-w": [
+        "pane::CloseActiveItem",
         {
-          "task_name": "fzf"
+          "close_pinned": false
         }
-      ], // For "space g f"
-      "ctrl-shift-q": "zed::Quit"
+      ]
     }
+  },
+  // In Editor
+  {
+    "context": "Pane && Editor",
+    "bindings": {
+      "ctrl-tab": "tab_switcher::Toggle",
+      "ctrl-1": "editor::ToggleFocus",
+    },
   },
   // Anywhere, except in an Editor, unless in normal mode
   {
-    "context": "((!Terminal || vi_mode) && (!Editor || vim_mode == normal))",
+    "context": "((!Terminal || vi_mode) && (!Editor || vim_mode == normal) && !menu)",
     "bindings": {
+      "enter": "go_to_line::Toggle",
+      "space 1": ["pane::ActivateItem", 0],
+      "space 2": ["pane::ActivateItem", 1],
+      "space 3": ["pane::ActivateItem", 2],
+      "space 4": ["pane::ActivateItem", 3],
+      "space 5": ["pane::ActivateItem", 4],
       "space space": "file_finder::Toggle",
       "space d": "debug_panel::ToggleFocus",
-      "space e": "project_panel::ToggleFocus",
       "space g g": [
         "workspace::SendKeystrokes",
-        "ctrl-alt-g alt-shift-z"
+        "ctrl-alt-shift-g alt-shift-z",
       ],
       "space g d": "git::Diff",
-      "space f": [
-        "workspace::SendKeystrokes",
-        "ctrl-alt-f alt-shift-z"
-      ],
-      "space o": "outline_panel::ToggleFocus",
-      "space t": "terminal_panel::ToggleFocus",
+      "space g b": "editor::BlameHover",
+      "space g shift-b": "git::Blame",
+      "space g f": "git::FileHistory",
+      "space g l": "editor::CopyPermalinkToLine",
+      "space g h": "editor::ToggleSelectedDiffHunks",
+      "space g H": "editor::ToggleAllDiffHunks",
+      "space y p": "workspace::CopyRelativePath",
+      "space y shift-p": "workspace::CopyPath",
       "space T": "workspace::NewTerminal",
-      "space /": [
-        "workspace::SendKeystrokes",
-        "ctrl-shift-f alt-shift-z"
-      ],
-      "space a": "agent::ToggleFocus",
+      "space t shift-t": "workspace::NewCenterTerminal",
+      "space a a": "agent::ToggleFocus",
+      "space a n": ["agent::NewExternalAgentThread", {"agent": "claude-acp"}],
+      "space a f": "agent::Follow",
       "shift-3": "vim::SearchUnderCursor",
-      "space q q": "zed::Quit"
+      "space x x": "diagnostics::DeployCurrentFile",
+      "space q q": "zed::Quit",
+      "ctrl-, s s": "zed::OpenSettings",
+      "ctrl-, s f": "zed::OpenSettingsFile",
+      "ctrl-, k k": "zed::OpenKeymap",
+      "ctrl-, k f": "zed::OpenKeymapFile",
+      "ctrl-, k d": "dev::OpenKeyContextView",
     }
   },
   // Any Pane, except Editor, unless in normal mode
   {
-    "context": "((Pane && !Editor && !Terminal) || (Editor && vim_mode == normal))",
+    "context": "((Pane && !Editor && !Terminal) || (Editor && vim_mode == normal) || (Terminal && vi_mode))",
     "bindings": {
       "space b d": "pane::CloseActiveItem",
-      "space p d": "pane::CloseActiveItem",
       "space b j": [
         "workspace::MoveItemToPaneInDirection",
         {
-          "direction": "left"
-        }
+          "direction": "left",
+        },
       ],
       "space b k": [
         "workspace::MoveItemToPaneInDirection",
         {
-          "direction": "down"
-        }
+          "direction": "down",
+        },
       ],
       "space b l": [
         "workspace::MoveItemToPaneInDirection",
         {
-          "direction": "up"
-        }
+          "direction": "up",
+        },
+      ],
+      "ctrl-shift-left": [
+        "workspace::MoveItemToPaneInDirection",
+        {
+          "direction": "left",
+        },
+      ],
+      "ctrl-shift-down": [
+        "workspace::MoveItemToPaneInDirection",
+        {
+          "direction": "down",
+        },
+      ],
+      "ctrl-shift-up": [
+        "workspace::MoveItemToPaneInDirection",
+        {
+          "direction": "up",
+        },
       ],
       "space b ;": [
         "workspace::MoveItemToPaneInDirection",
         {
-          "direction": "right"
-        }
-      ]
-    }
+          "direction": "right",
+        },
+      ],
+      "ctrl-shift-right": [
+        "workspace::MoveItemToPaneInDirection",
+        {
+          "direction": "right",
+        },
+      ],
+    },
   },
   {
     "context": "Editor && vim_mode == insert",
     "bindings": {
       // "j k": "vim::NormalBefore"
-      "ctrl-s": [
-        "workspace::SendKeystrokes",
-        "escape ctrl-s"
-      ],
-      "ctrl-z": null
-    }
+      "ctrl-s": ["workspace::SendKeystrokes", "escape ctrl-s"],
+      "ctrl-z": null,
+    },
   },
   {
     "context": "Editor && vim_mode == normal",
@@ -113,12 +193,13 @@
       "space x X": [
         "diagnostics::Deploy",
         {
-          "current_file": true
-        }
+          "current_file": true,
+        },
       ],
       "space u h": "editor::ToggleInlayHints",
       "space u d": "editor::ToggleInlineDiagnostics",
       "space u g": "editor::ToggleSelectedDiffHunks",
+      "space u l": "editor::ToggleRelativeLineNumbers",
       "n": "search::SelectNextMatch",
       "shift-n": "search::SelectPreviousMatch",
       "ctrl-s": "workspace::Save",
@@ -127,43 +208,218 @@
       "j": "vim::Left",
       "k": "vim::Down",
       "l": "vim::Up",
-      ";": "vim::Right"
+      ";": "vim::Right",
+    },
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-p": ["terminal::SendKeystroke", "ctrl-p"],
+      // Forward to herdr as CSI-u (prev/next tab)
+      "ctrl-alt-,": ["terminal::SendText", "\u001b[44;7u"],
+      "ctrl-alt-.": ["terminal::SendText", "\u001b[46;7u"],
+    },
+    "unbind": {
+      "ctrl-w ctrl-q": "pane::CloseActiveItem"
     }
   },
   {
     "context": "DebugPanel",
     "bindings": {
       "ctrl-tab": "pane::ActivateNextItem",
-      "ctrl-shift-tab": "pane::ActivatePreviousItem"
-    }
-  },
-  {
-    "context": "(BufferSearchBar || ProjectSearchBar)",
-    "bindings": {
-      "alt-/": "search::ToggleReplace"
-    }
-  },
-  {
-    "context": "Workspace",
-    "bindings": {
-      "ctrl-a ctrl-s": "git::Worktree"
-    }
-  },
-  {
-    "context": "Workspace",
-    "unbind": {
-      "alt-shift-w": "git::Worktree"
-    }
-  },
-  {
-    "unbind": {
-      "ctrl-q": "zed::Quit"
-    }
+      "ctrl-shift-tab": "pane::ActivatePreviousItem",
+    },
   },
   {
     "context": "TabSwitcher",
     "bindings": {
-      "ctrl-delete": "tab_switcher::CloseSelectedItem"
+      "ctrl-delete": "tab_switcher::CloseSelectedItem",
+    },
+  },
+  {
+    "context": "(BufferSearchBar || ProjectSearchBar)",
+    "bindings": {
+      "alt-/": "search::ToggleReplace",
+    },
+  },
+  // Agent panel message pane
+  {
+    "context": "AgentPanel && !Editor",
+    "bindings": {
+      "space a m": "menu::SelectFirst",
+      "p": "agent::ScrollOutputToPreviousMessage",
+      "n": "agent::ScrollOutputToNextMessage",
+    },
+  },
+  // Agent panel message pane or editor
+  {
+    "context": "(AgentPanel && !Editor) || (AgentPanel > Editor && vim_mode == normal)",
+    "bindings": {
+      "space a m": "agent::ToggleModelSelector",
+      "space a t": "agent::ToggleThinkingMode",
+      "space a e": "agent::ToggleThinkingEffortMenu",
+      "space a d": "agent::OpenAgentDiff",
+      "/": "agent::ToggleSearch",
+      "alt-shift-z": "agent::ExpandMessageEditor",
+    }
+  },
+  {
+    "context": "ThreadsSidebar && !Editor",
+    "bindings": {
+      "z f": "editor::ToggleFold",
+      "z a": "editor::FoldAll",
+      "z A": "editor::UnfoldAll",
+    },
+    "unbind": {
+      "z a": "editor::ToggleFold",
+      "z shift-m": "editor::FoldAll",
+    },
+  },
+  {
+    "context": "VimControl && !menu",
+    "bindings": {
+      "z f": "editor::ToggleFold",
+      "z a": "editor::FoldAll",
+      "z A": "editor::UnfoldAll",
+    },
+    "unbind": {
+      "z a": "editor::ToggleFold",
+      "z shift-m": "editor::FoldAll",
+    },
+  },
+  {
+    "context": "BufferSearchBar",
+    "bindings": {
+      "z a": "editor::ToggleFoldAll",
+    },
+    "unbind": {
+      "ctrl-shift-enter": "editor::ToggleFoldAll",
+    },
+  },
+  {
+    "context": "GitCommit",
+    "bindings": {
+      "g space": "git::OpenFileAtHead",
+    },
+  },
+  {
+    "context": "Editor && multibuffer && vim_mode == normal",
+    "bindings": {
+      "ctrl-n": "editor::MoveToStartOfNextExcerpt",
+      "ctrl-p": [
+        "action::Sequence",
+        ["editor::MoveToEndOfPreviousExcerpt", "editor::MoveToStartOfExcerpt"]
+      ]
+    }
+  },
+  {
+    "context": "(VimControl && !menu) || (!Editor && !Terminal)",
+    "bindings": {
+      "ctrl-shift-j": "vim::ResizePaneLeft",
+      "ctrl-shift-k": "vim::ResizePaneDown",
+      "ctrl-shift-l": "vim::ResizePaneUp",
+      "ctrl-shift-;": "vim::ResizePaneRight"
+    }
+  },
+  {
+    "context": "(vim_mode == normal || vim_mode == select) && !menu",
+    "bindings": {
+      "space y p": "editor::CopyFileLocation",
+      "space y": null
+    }
+  },
+  // Copy location range in visual mode without conflicting with `y` to yank selection
+  {
+    "context": "Editor && vim_mode == visual",
+    "bindings": {
+      "g y": "editor::CopyFileLocation",
+      "space g l": "editor::CopyPermalinkToLine",
+      // Add review comment
+      "space g c": ["workspace::SendKeystrokes", "g y ctrl-alt-shift-r ctrl-k"],
+      // Add review comment with suggestion
+      "space g C": ["workspace::SendKeystrokes", "g y ctrl-alt-shift-s ctrl-k"]
+    }
+  },
+  {
+    "context": "CommitDiff",
+    "bindings": {
+      "g h space": "git::OpenFileAtHead"
+    }
+  },
+  {
+    "context": "Pane",
+    "bindings": {
+      "ctrl-alt-t": "editor::ToggleTabBar"
+    }
+  },
+  {
+    "bindings": {
+      "ctrl-, z l": "zed::OpenLog",
+      "ctrl-, z L": "zed::OpenTelemetryLog"
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-escape": "terminal::ToggleViMode",
+      "ctrl-shift-left": "vim::ResizePaneLeft",
+      "ctrl-shift-down": "vim::ResizePaneDown",
+      "ctrl-shift-up": "vim::ResizePaneUp",
+      "ctrl-shift-right": "vim::ResizePaneRight"
+    }
+  },
+  {
+    "context": "Editor || Pane",
+    "bindings": {
+      "ctrl-alt-/": [
+        "pane::ActivateNextItem",
+        {
+          "wrap_around": false
+        }
+      ],
+      "ctrl-alt-m": [
+        "pane::ActivatePreviousItem",
+        {
+          "wrap_around": false
+        }
+      ],
+      "ctrl-pageup": [
+        "pane::ActivateNextItem",
+        {
+          "wrap_around": false
+        }
+      ],
+      "ctrl-pagedown": [
+        "pane::ActivatePreviousItem",
+        {
+          "wrap_around": false
+        }
+      ]
+    }
+  },
+  {
+    "context": "OutlinePanel && not_editing",
+    "bindings": {
+      "alt-enter": "outline_panel::OpenSelectedEntry"
+    }
+  },
+  // Unbind
+  {
+    "context": "(VimControl && !menu) || (!Editor && !Terminal)",
+    "unbind": {
+      "ctrl-w o": "workspace::CloseInactiveTabsAndPanes"
+    }
+  },
+  {
+    "context": "Pane",
+    "bindings": {
+      "ctrl-w ctrl-p": "pane::TogglePinTab"
+    }
+  },
+  {
+    "context": "Pane",
+    "unbind": {
+      "ctrl-k shift-enter": "pane::TogglePinTab"
     }
   }
 ]

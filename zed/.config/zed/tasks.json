@@ -52,15 +52,6 @@
     // "tags": []
   },
   {
-    "label": "fzf",
-    "command": "fzf --preview 'bat --color=always --style=numbers --line-range :500 {}' | xargs -r zed",
-    "use_new_terminal": false,
-    "allow_concurrent_runs": false,
-    "reveal": "always",
-    "reveal_target": "center",
-    "hide": "always",
-  },
-  {
     "label": "lazygit",
     "command": "lazygit",
     "use_new_terminal": false,
@@ -82,4 +73,18 @@
     "label": "Dotfiles",
     "command": "cd ~ && git clone https://github.com/GDYendell/dotfiles.git && dotfiles/vscode/install.sh",
   },
+  {
+    "label": "Add Review Comment",
+    "command": "gh-pr-review.sh --comment \"$(wl-paste)\"",
+    "use_new_terminal": false,
+    "reveal": "never",
+    "allow_concurrent_runs": false,
+  },
+  {
+    "label": "Add Review Comment With Suggestion",
+    "command": "gh-pr-review.sh --suggest \"$(wl-paste)\"",
+    "use_new_terminal": false,
+    "reveal": "never",
+    "allow_concurrent_runs": false,
+  }
 ]
