@@ -63,8 +63,8 @@ alias h="uwsm start -g -1 -D Hyprland hyprland.desktop"
 alias tmks="tmux kill-server"
 
 if [[ -o interactive ]]; then
-  grep() { echo 'Use rg!' >&2; command grep "$@"; }
-  find() { echo 'Use fd!' >&2; command find "$@"; }
+  function grep { echo 'Use rg!' >&2; command grep "$@"; }
+  function find { echo 'Use fd!' >&2; command find "$@"; }
 fi
 
 function repeat() {
