@@ -1,4 +1,4 @@
-export PATH=$PATH:/home/gdy/.cargo/bin
+export PATH=$PATH:$HOME/.cargo/bin
 
 export SSH_AUTH_SOCK=$HOME/.ssh/ssh-agent.sock
 
