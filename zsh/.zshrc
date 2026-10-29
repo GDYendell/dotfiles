@@ -84,7 +84,8 @@ set -o vi
 
 command -v zoxide >/dev/null && eval "$(zoxide init --cmd cd zsh)"
 
-eval "$(atuin init zsh)"
+[[ -f $HOME/.atuin/bin/env ]] && . "$HOME/.atuin/bin/env"
+command -v atuin >/dev/null && eval "$(atuin init zsh)"
 
 eval "$(starship init zsh)"
 source "$HOME/.local/share/zsh/transient-prompt.plugin.zsh"
