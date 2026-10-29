@@ -1,0 +1,56 @@
+onboarding = false
+
+[theme]
+name = "dracula"
+auto_switch = false
+
+[ui]
+prompt_new_tab_name = false
+sidebar_start_collapsed = true
+sidebar_collapsed_mode = "hidden"
+host_cursor = "native"
+tab_bar_right = [
+  # Server hostname, only when attached to a remote (empty output hides the entry)
+  { type = "command", command = "h=$(uname -n); [ \"$h\" != OI-LT-GD4RFJ4 ] && echo \"$h\"", interval_seconds = 60, timeout_seconds = 1 },
+  { type = "command", command = "printf '%s\\n' \"$HERDR_ACTIVE_PANE_CWD\" | sed \"s|^$HOME|~|\"", interval_seconds = 1, timeout_seconds = 1 },
+]
+
+[ui.toast]
+delivery = "herdr"
+
+# Mapped from ~/.config/tmux/tmux.conf (prefix left at herdr default ctrl+b)
+[keys]
+split_vertical = "prefix+|"
+split_horizontal = "prefix+minus"
+focus_pane_left = "prefix+j"
+focus_pane_down = "prefix+k"
+focus_pane_up = "prefix+l"
+focus_pane_right = "prefix+semicolon"
+navigate_pane_left = "j"
+navigate_pane_down = "k"
+navigate_pane_up = "l"
+navigate_pane_right = "semicolon"
+last_pane = "prefix+p"
+previous_tab = "ctrl+alt+comma"
+zoom = "alt+z"
+rename_tab = "prefix+r"
+resize_mode = "prefix+ctrl+r"
+rename_workspace = "prefix+shift+r"
+reload_config = "prefix+ctrl+shift+r"
+new_workspace = "prefix+shift+n"
+new_tab = "prefix+ctrl+c"
+workspace_picker = "prefix+space"
+settings = "prefix+comma"
+switch_workspace = "prefix+1..9"
+switch_tab = "prefix+ctrl+1..9"
+next_workspace = "prefix+w"
+next_tab = ["prefix+t", "ctrl+alt+period"]
+next_agent = "prefix+a"
+
+[[keys.command]]
+key = "prefix+c"
+type = "popup"
+command = "~/.local/bin/herdr-workspace.sh"
+width = 60
+height = 8
+description = "new workspace: shell, claude, lazygit"
