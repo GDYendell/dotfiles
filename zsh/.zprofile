@@ -7,6 +7,7 @@ ssh-add -l 2>/dev/null >/dev/null
 
 if [ $? -ge 2 ] ; then
   echo "Starting ssh-agent"
+  rm -f $SSH_AUTH_SOCK
   eval `ssh-agent -a $SSH_AUTH_SOCK`
 else
   echo "Using existing ssh-agent"
