@@ -40,3 +40,7 @@ There is no top-level install orchestration. Run whichever scripts are relevant 
 ## Relationship to Omarchy
 
 These dotfiles are designed to layer on top of [Omarchy](https://github.com/basecamp/omarchy) defaults, but also work on non-Omarchy machines. When adopting an application that Omarchy configures, use the Omarchy config as the reference and pull in what makes sense. Omarchy-specific behaviour (themed styles, Omarchy-specific scripts) should be left to Omarchy and not duplicated here.
+
+## Git
+
+Commit directly to `main`; no feature branches.
