@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# Print context for today's Obsidian daily note, or render a JSON entry from stdin and append it.
+# Never creates the note: it comes from an Obsidian template.
+# Without DEVLOG_DIR (e.g. over SSH), entries are written to an outbox directory instead.
+set -euo pipefail
+
+outbox="${DEVLOG_OUTBOX:-$HOME/.devlog/outbox}"
+note=""
+[[ -n ${DEVLOG_DIR:-} ]] && note="$DEVLOG_DIR/$(LC_ALL=C date +%Y/%m-%b/%Y-%m-%d).md"
+repo="$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")"
+
+# JSON entry -> Obsidian markdown. Schema:
+#   {topic, summary, lessons: [{q, a}], files: [path], turns: [{prompt, outcome}]}
+render='
+def quote($p): split("\n") | map(if . == "" then ($p | rtrimstr(" ")) else $p + . end) | join("\n");
+def callout($head; $body): if $body == "" then empty else "\($head)\n\($body)" end;
+
+if (.summary | type) != "string" or .summary == "" then error("summary is required")
+elif (.turns | type) != "array" or (.turns | length) == 0 then error("turns must be a non-empty array")
+elif any(.turns[]; (.prompt | type) != "string" or (.outcome | type) != "string")
+  then error("each turn needs a prompt and an outcome")
+else
+  (.lessons // []) as $lessons | (.files // []) as $files |
+  [
+    "## \($time) · \($repo) — \(.topic // "untitled")",
+    .summary,
+    callout("> [!tip] Lessons";
+      $lessons | map("**\(.q)**\n\(.a)" | quote("> ")) | join("\n>\n")),
+    callout("> [!abstract]- Files (\($files | length))";
+      $files | map("> - `\(.)`") | join("\n")),
+    callout("> [!example]- Conversation (\(.turns | length) prompt\(if (.turns | length) == 1 then "" else "s" end))";
+      .turns | map((.prompt | quote("> > ")) + "\n>\n> → " + (.outcome | gsub("\n"; " "))) | join("\n>\n")),
+    "---"
+  ] | join("\n\n")
+end
+'
+
+case "${1:-context}" in
+  context)
+    if [[ -z $note ]]; then echo "Today's note: OUTBOX: $outbox"
+    elif [[ -f $note ]]; then echo "Today's note: $note"
+    else echo "Today's note: MISSING: $note"
+    fi
+    echo "Repo: $repo"
+    ;;
+  append)
+    entry="$(jq -r --arg time "$(date +%H:%M)" --arg repo "$repo" "$render")"
+    if [[ -z $note ]]; then
+      mkdir -p "$outbox"
+      file="$outbox/$(date +%Y-%m-%d-%H%M%S)-$repo.md"
+      printf '\n%s\n' "$entry" > "$file"
+      echo "Written to outbox: $file"
+    else
+      [[ -f $note ]] || { echo "MISSING: $note" >&2; exit 1; }
+      printf '\n%s\n' "$entry" >> "$note"
+    fi
+    ;;
+  render)
+    jq -r --arg time "$(date +%H:%M)" --arg repo "$repo" "$render"
+    ;;
+  *)
+    echo "usage: devlog-note [context|append|render]" >&2
+    exit 2
+    ;;
+esac
