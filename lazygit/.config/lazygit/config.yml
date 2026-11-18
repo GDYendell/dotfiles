@@ -1,3 +1,8 @@
+gui:
+  # Stack panels whenever width <= 88 cols, regardless of height
+  portraitMode: auto
+  portraitModeAutoMaxWidth: 88
+  portraitModeAutoMinHeight: 0
 os:
   editPreset: "nvim"
 git:
