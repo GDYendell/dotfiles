@@ -36,6 +36,11 @@ Then:
   parent is paused until you report back.
 - When finished, the user runs `/sidequest-done` to report back to `<parent>`.
 
+End the brief with:
+
+> Don't start work yet. Reply with a one- or two-line summary of what you understand this
+> sidequest to be and a short list of suggested first steps, then wait for the user.
+
 ## 3. Launch
 
 If `HERDR_PANE_ID` is unset (not inside herdr), skip the split. Give the user the command to run
