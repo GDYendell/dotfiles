@@ -34,6 +34,8 @@ Write in plain, normal prose, whatever response style is active in the conversat
   their wording. This is what they will re-read later, so make it worthwhile.
 - **Lessons:** a recap of questions the user asked and their answer, if its usefulness will
   outlive this session. Flatten follow-up questions into one entry.
+- **Code formatting:** in summaries, outcomes and lessons, wrap paths, commands, config keys,
+  identifiers and placeholders in backticks, e.g. `/media/data/rtcd.json`, `links_enabled`.
 
 ## 3. Ask
 

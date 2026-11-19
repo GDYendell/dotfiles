@@ -14,6 +14,8 @@ repo="$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")"
 render='
 def quote($p): split("\n") | map(if . == "" then ($p | rtrimstr(" ")) else $p + . end) | join("\n");
 def callout($head; $body): if $body == "" then empty else "\($head)\n\($body)" end;
+# Escape < outside backtick spans, or Obsidian treats e.g. <slot> as raw HTML and stops rendering.
+def esc: split("`") | to_entries | map(if .key % 2 == 0 then .value | gsub("<"; "\\<") else .value end) | join("`");
 
 if (.summary | type) != "string" or .summary == "" then error("summary is required")
 elif (.turns | type) != "array" or (.turns | length) == 0 then error("turns must be a non-empty array")
@@ -22,14 +24,14 @@ elif any(.turns[]; (.prompt | type) != "string" or (.outcome | type) != "string"
 else
   (.lessons // []) as $lessons | (.files // []) as $files |
   [
-    "## \($time) · \($repo) — \(.topic // "untitled")",
-    .summary,
+    "## \($time) · \($repo) — \(.topic // "untitled" | esc)",
+    (.summary | esc),
     callout("> [!tip] Lessons";
-      $lessons | map("**\(.q)**\n\(.a)" | quote("> ")) | join("\n>\n")),
+      $lessons | map("**\(.q | esc)**\n\(.a | esc)" | quote("> ")) | join("\n>\n")),
     callout("> [!abstract]- Files (\($files | length))";
       $files | map("> - `\(.)`") | join("\n")),
     callout("> [!example]- Conversation (\(.turns | length) prompt\(if (.turns | length) == 1 then "" else "s" end))";
-      .turns | map((.prompt | quote("> > ")) + "\n>\n> → " + (.outcome | gsub("\n"; " "))) | join("\n>\n")),
+      .turns | map((.prompt | esc | quote("> > ")) + "\n>\n> → " + (.outcome | esc | gsub("\n"; " "))) | join("\n>\n")),
     "---"
   ] | join("\n\n")
 end
