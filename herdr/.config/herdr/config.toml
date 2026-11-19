@@ -16,7 +16,7 @@ tab_bar_right = [
 ]
 
 [ui.toast]
-delivery = "herdr"
+delivery = "system"
 
 # Mapped from ~/.config/tmux/tmux.conf (prefix left at herdr default ctrl+b)
 [keys]
@@ -54,3 +54,6 @@ command = "~/.local/bin/herdr-workspace.sh"
 width = 60
 height = 8
 description = "new workspace: shell, claude, lazygit"
+
+[ui.sound]
+enabled = false
