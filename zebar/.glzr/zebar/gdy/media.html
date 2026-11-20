@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <link rel="stylesheet" type="text/css" href="./panel.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.3.1?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?dev';
+      import * as zebar from 'https://esm.sh/zebar@3.3.1';
+      import { runPs, runPsJson } from './ps.js';
+      import { setupPanel, useFitHeight, usePolling } from './panel.js';
+      import { Icon } from './icons.js';
+
+      setupPanel('media-panel');
+
+      // Art, source app and timeline (seconds), which Zebar's provider lacks.
+      const mediaInfo = async () => ({ ...(await runPsJson('media', 'info')), fetchedAt: Date.now() });
+      const seek = seconds => runPs('media', `seek ${Math.round(seconds)}`);
+
+      const providers = zebar.createProviderGroup({ media: { type: 'media' } });
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      // "SpotifyAB.SpotifyMusic_xyz!Spotify" -> "Spotify", "chrome.exe" -> "Chrome".
+      const SOURCE_NAMES = { msedge: 'Edge', chrome: 'Chrome', firefox: 'Firefox' };
+      function sourceName(id) {
+        if (!id) return null;
+        const base = id.split('!').pop().replace(/\.exe$/i, '');
+        return SOURCE_NAMES[base.toLowerCase()] ?? base.charAt(0).toUpperCase() + base.slice(1);
+      }
+
+      function clock(seconds) {
+        const s = Math.max(0, Math.floor(seconds));
+        return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+      }
+
+      function App() {
+        const [media, setMedia] = useState(providers.outputMap.media);
+        const [info, setInfo] = useState(null);
+        const [, tick] = useState(0);
+        const panelRef = useRef(null);
+        useFitHeight(panelRef);
+
+        useEffect(() => {
+          providers.onOutput(() => setMedia(providers.outputMap.media));
+        }, []);
+
+        const session = media?.currentSession;
+
+        // Re-render each second to advance the progress bar, only while playing.
+        useEffect(() => {
+          if (!session?.isPlaying) return;
+          const timer = setInterval(() => tick(t => t + 1), 1000);
+          return () => clearInterval(timer);
+        }, [session?.isPlaying]);
+        // One read at a time, newest wins.
+        const { refresh } = usePolling(mediaInfo, null, setInfo);
+
+        // Re-read art and timeline when the track or play state changes.
+        useEffect(() => {
+          if (session) refresh();
+        }, [session?.title, session?.isPlaying]);
+
+        if (!session) {
+          return (
+            <div className="panel" ref={panelRef}>
+              <div className="panel-header">
+                <Icon name="nf-md-music" />
+                <div className="panel-title">
+                  <h1>Nothing playing</h1>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // Advance the position locally between reads while playing.
+        const end = info?.end ?? 0;
+        const position = info
+          ? Math.min(end, info.position + (session.isPlaying ? (Date.now() - info.fetchedAt) / 1000 : 0))
+          : 0;
+        const pct = end ? (position / end) * 100 : 0;
+
+        function onSeek(e) {
+          if (!info?.canSeek || !end) return;
+          const rect = e.currentTarget.getBoundingClientRect();
+          seek(((e.clientX - rect.left) / rect.width) * end)
+            .then(refresh)
+            .catch(err => console.error(err));
+        }
+
+        return (
+          <div className="panel" ref={panelRef}>
+            <div className="media-head">
+              {info?.art ? (
+                <img className="media-art" src={info.art} alt="" />
+              ) : (
+                <div className="media-art placeholder">
+                  <Icon name="nf-md-music" />
+                </div>
+              )}
+              <div className="media-text">
+                <div className="media-title" title={session.title}>{session.title ?? 'Unknown'}</div>
+                <div className="media-artist" title={session.artist}>{session.artist}</div>
+                <div className="media-album" title={session.albumTitle}>{session.albumTitle}</div>
+                {info?.source && <div className="panel-subtitle">{sourceName(info.source)}</div>}
+              </div>
+            </div>
+
+            <div className="section">
+              <div
+                className={`media-progress ${info?.canSeek ? 'seekable' : ''}`}
+                title={info?.canSeek ? 'Seek' : ''}
+                onClick={onSeek}
+              >
+                <div style={{ width: `${pct}%` }} />
+              </div>
+              <div className="media-times">
+                <span>{clock(position)}</span>
+                <span>{clock(end)}</span>
+              </div>
+              <div className="media-controls">
+                <button className="icon-button" title="Previous" onClick={() => media.previous()}>
+                  <Icon name="nf-md-skip_previous" />
+                </button>
+                <button className="icon-button play" title="Play/pause" onClick={() => media.togglePlayPause()}>
+                  <Icon name={session.isPlaying ? 'nf-md-pause' : 'nf-md-play'} />
+                </button>
+                <button className="icon-button" title="Next" onClick={() => media.next()}>
+                  <Icon name="nf-md-skip_next" />
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>

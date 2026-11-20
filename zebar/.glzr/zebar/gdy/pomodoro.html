@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <link rel="stylesheet" type="text/css" href="./panel.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.3.1?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?dev';
+      import { channel, setupPanel, useFitHeight } from './panel.js';
+      import { Icon } from './icons.js';
+      import { DURATIONS, POMODORO_ICON, formatMs, remainingMs } from './pomodoro.js';
+
+      setupPanel('pomodoro-panel');
+
+      // The bar runs the timer; this panel only shows it and sends commands.
+      const send = (cmd, extra = {}) => channel.postMessage({ type: 'pomo-cmd', cmd, ...extra });
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      const MODE_NAMES = { work: 'Work', break: 'Break' };
+
+      function App() {
+        const [pomo, setPomo] = useState(null);
+        const [now, setNow] = useState(Date.now());
+        const panelRef = useRef(null);
+        useFitHeight(panelRef);
+
+        useEffect(() => {
+          const onMessage = ({ data }) => data.type === 'pomo-state' && setPomo(data.state);
+          channel.addEventListener('message', onMessage);
+          channel.postMessage({ type: 'pomo-request' });
+          const timer = setInterval(() => setNow(Date.now()), 500);
+          return () => {
+            channel.removeEventListener('message', onMessage);
+            clearInterval(timer);
+          };
+        }, []);
+
+        if (!pomo) return null;
+        const running = !!pomo.endAt;
+        const status = pomo.done ? 'Ready' : running ? 'Running' : 'Paused';
+
+        return (
+          <div className="panel" ref={panelRef}>
+            <div className="panel-header">
+              <Icon name={POMODORO_ICON} />
+              <div className="panel-title">
+                <h1>Pomodoro</h1>
+                <div className="panel-subtitle">{`${MODE_NAMES[pomo.mode]} · ${status}`}</div>
+              </div>
+              <button className="icon-button" title="Reset" onClick={() => send('reset')}>
+                <Icon name="nf-md-restore" />
+              </button>
+              <button className="icon-button mute" title={running ? 'Pause' : 'Start'} onClick={() => send('toggle')}>
+                <Icon name={running ? 'nf-md-pause' : 'nf-md-play'} />
+              </button>
+            </div>
+
+            <div className={`pomo-time ${pomo.done ? 'done' : running ? '' : 'paused'}`}>
+              {formatMs(remainingMs(pomo, now))}
+            </div>
+
+            <div className="section">
+              <div className="section-head">
+                <span>Mode</span>
+              </div>
+              <div className="choices">
+                {Object.keys(DURATIONS).map(mode => (
+                  <button
+                    key={mode}
+                    className={`choice ${pomo.mode === mode ? 'selected' : ''}`}
+                    onClick={() => pomo.mode !== mode && send('mode', { mode })}
+                  >
+                    {MODE_NAMES[mode]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="section">
+              <div className="section-head">
+                <span>Duration</span>
+              </div>
+              <div className="choices">
+                {DURATIONS[pomo.mode].map(minutes => (
+                  <button
+                    key={minutes}
+                    className={`choice ${pomo.minutes[pomo.mode] === minutes ? 'selected' : ''}`}
+                    onClick={() => send('duration', { minutes })}
+                  >
+                    {minutes}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>

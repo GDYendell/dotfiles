@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <link rel="stylesheet" type="text/css" href="./panel.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.3.1?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?dev';
+      import * as zebar from 'https://esm.sh/zebar@3.3.1';
+      import { setupPanel, useFitHeight } from './panel.js';
+      import { Icon, weatherIcon as barWeatherIcon } from './icons.js';
+      import { LOCATION } from './location.js';
+
+      setupPanel('weather-panel');
+
+      // weather: same provider and location as the bar, so the main icon
+      // matches the bar's.
+      const providers = zebar.createProviderGroup({
+        weather: {
+          type: 'weather',
+          latitude: LOCATION.latitude,
+          longitude: LOCATION.longitude,
+          refreshInterval: 15 * 60 * 1000,
+        },
+      });
+
+      // Open-Meteo: free, no key, CORS-enabled.
+      async function fetchForecast(lat, lon) {
+        const params = new URLSearchParams({
+          latitude: lat.toFixed(2),
+          longitude: lon.toFixed(2),
+          current: 'temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,is_day',
+          daily: 'weather_code,temperature_2m_max,temperature_2m_min',
+          timezone: 'auto',
+          forecast_days: '4',
+        });
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+        if (!res.ok) throw new Error(`Open-Meteo ${res.status}`);
+        return res.json();
+      }
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      // WMO weather codes -> Nerd Font weather icons.
+      function weatherIcon(code, isDay = true) {
+        const dn = (day, night) => (isDay ? day : night);
+        if (code === 0) return dn('nf-weather-day_sunny', 'nf-weather-night_clear');
+        if (code <= 2) return dn('nf-weather-day_cloudy', 'nf-weather-night_alt_cloudy');
+        if (code === 3) return 'nf-weather-cloudy';
+        if (code <= 48) return dn('nf-weather-day_fog', 'nf-weather-night_fog');
+        if (code <= 57) return dn('nf-weather-day_sprinkle', 'nf-weather-night_alt_sprinkle');
+        if (code <= 67) return 'nf-weather-rain';
+        if (code <= 77) return 'nf-weather-snow';
+        if (code <= 82) return dn('nf-weather-day_showers', 'nf-weather-night_alt_showers');
+        if (code <= 86) return 'nf-weather-snow_wind';
+        return 'nf-weather-thunderstorm';
+      }
+
+      function weatherLabel(code) {
+        if (code === 0) return 'Clear';
+        if (code <= 2) return 'Partly cloudy';
+        if (code === 3) return 'Overcast';
+        if (code <= 48) return 'Fog';
+        if (code <= 57) return 'Drizzle';
+        if (code <= 67) return 'Rain';
+        if (code <= 77) return 'Snow';
+        if (code <= 82) return 'Showers';
+        if (code <= 86) return 'Snow showers';
+        return 'Thunderstorm';
+      }
+
+      const dayName = iso => new Date(`${iso}T12:00`).toLocaleDateString('en-GB', { weekday: 'long' });
+      const deg = n => `${Math.round(n)}°`;
+
+      function App() {
+        const [barWeather, setBarWeather] = useState(providers.outputMap.weather);
+        const [data, setData] = useState(null);
+        const [error, setError] = useState(null);
+        const panelRef = useRef(null);
+        useFitHeight(panelRef);
+
+        useEffect(() => {
+          providers.onOutput(() => {
+            setBarWeather(providers.outputMap.weather);
+          });
+        }, []);
+
+        useEffect(() => {
+          fetchForecast(LOCATION.latitude, LOCATION.longitude)
+            .then(setData)
+            .catch(err => {
+              console.error(err);
+              setError(String(err.message ?? err));
+            });
+        }, []);
+
+        if (!data) {
+          return (
+            <div className="panel" ref={panelRef}>
+              <div className="panel-header">
+                <Icon name={barWeatherIcon(barWeather)} />
+                <div className="panel-title">
+                  <h1>Weather</h1>
+                  <div className="panel-subtitle">{error ?? 'Loading…'}</div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        const now = data.current;
+        const days = data.daily.time.slice(1).map((date, i) => ({
+          date,
+          code: data.daily.weather_code[i + 1],
+          max: data.daily.temperature_2m_max[i + 1],
+          min: data.daily.temperature_2m_min[i + 1],
+        }));
+
+        return (
+          <div className="panel" ref={panelRef}>
+            <div className="weather-now">
+              <div className="weather-temp">
+                <Icon
+                  name={barWeather ? barWeatherIcon(barWeather) : weatherIcon(now.weather_code, now.is_day)}
+                  className="weather-big-icon"
+                />
+                <span className="weather-big">{Math.round(now.temperature_2m)}</span>
+                <span className="weather-unit">°C</span>
+              </div>
+              <div className="weather-side">
+                <div className="weather-place">
+                  <Icon name="nf-md-map_marker" />
+                  <span>{LOCATION.name}</span>
+                </div>
+                <div className="weather-label">{weatherLabel(now.weather_code)}</div>
+                <div className="weather-facts">
+                  <div>
+                    <span className="stat-label">Feels</span>
+                    <span>{deg(now.apparent_temperature)}C</span>
+                  </div>
+                  <div>
+                    <span className="stat-label">Wind</span>
+                    <span>{Math.round(now.wind_speed_10m)} km/h</span>
+                  </div>
+                  <div>
+                    <span className="stat-label">Humid</span>
+                    <span>{Math.round(now.relative_humidity_2m)}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="section weather-days">
+              {days.map(d => (
+                <div key={d.date} className="weather-day">
+                  <Icon name={weatherIcon(d.code)} />
+                  <div>
+                    <div className="stat-label day-name">{dayName(d.date)}</div>
+                    <div>
+                      {deg(d.max)} <span className="stat-label">{deg(d.min)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>

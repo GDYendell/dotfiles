@@ -1,0 +1,509 @@
+{
+  "$schema": "https://github.com/glzr-io/zebar/raw/v3.3.1/resources/zpack-schema.json",
+  "name": "gdy",
+  "version": "0.0.1",
+  "description": "Top bar for GlazeWM.",
+  "tags": [
+    "topbar"
+  ],
+  "previewImages": [],
+  "repositoryUrl": "",
+  "widgets": [
+    {
+      "name": "bar",
+      "htmlPath": "./bar.html",
+      "includeFiles": [
+        "*.html",
+        "*.css",
+        "*.js",
+        "work-end.mp3",
+        "break-end.wav"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "zOrder": "normal",
+      "shownInTaskbar": false,
+      "focused": false,
+      "resizable": false,
+      "transparent": true,
+      "privileges": {
+        "shellCommands": []
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_left",
+          "offsetX": "0px",
+          "offsetY": "0px",
+          "width": "100%",
+          "height": "26px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": true,
+            "edge": "top",
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "audio-panel",
+      "htmlPath": "./audio.html",
+      "includeFiles": [
+        "*.html",
+        "*.css",
+        "*.js"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "zOrder": "top_most",
+      "shownInTaskbar": false,
+      "focused": true,
+      "resizable": false,
+      "transparent": true,
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "powershell",
+            "argsRegex": "^-NoProfile -File C:\\\\Users\\\\GaryYendell\\\\\\.glzr\\\\zebar\\\\gdy\\\\set-audio-default\\.ps1 \\{[0-9a-fA-F.]+\\}\\.\\{[0-9a-fA-F-]+\\}$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^ms-settings:sound$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-8px",
+          "offsetY": "30px",
+          "width": "400px",
+          "height": "400px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "system-panel",
+      "htmlPath": "./system.html",
+      "includeFiles": [
+        "*.html",
+        "*.css",
+        "*.js"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "zOrder": "top_most",
+      "shownInTaskbar": false,
+      "focused": true,
+      "resizable": false,
+      "transparent": true,
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "taskmgr",
+            "argsRegex": "^$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-8px",
+          "offsetY": "30px",
+          "width": "400px",
+          "height": "400px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "power-panel",
+      "htmlPath": "./power.html",
+      "includeFiles": [
+        "*.html",
+        "*.css",
+        "*.js"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "zOrder": "top_most",
+      "shownInTaskbar": false,
+      "focused": true,
+      "resizable": false,
+      "transparent": true,
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "powershell",
+            "argsRegex": "^-NoProfile -File C:\\\\Users\\\\GaryYendell\\\\\\.glzr\\\\zebar\\\\gdy\\\\power-mode\\.ps1 (get|set (efficiency|balanced|performance))$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^ms-settings:powersleep$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-8px",
+          "offsetY": "30px",
+          "width": "400px",
+          "height": "400px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "network-panel",
+      "htmlPath": "./network.html",
+      "includeFiles": [
+        "*.html",
+        "*.css",
+        "*.js"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "zOrder": "top_most",
+      "shownInTaskbar": false,
+      "focused": true,
+      "resizable": false,
+      "transparent": true,
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "powershell",
+            "argsRegex": "^-NoProfile -File C:\\\\Users\\\\GaryYendell\\\\\\.glzr\\\\zebar\\\\gdy\\\\wifi\\.ps1 (status|disconnect|connect ([0-9a-f]{2})+)$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^ms-settings:network$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-8px",
+          "offsetY": "30px",
+          "width": "400px",
+          "height": "400px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "bluetooth-panel",
+      "htmlPath": "./bluetooth.html",
+      "includeFiles": [
+        "*.html",
+        "*.css",
+        "*.js"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "zOrder": "top_most",
+      "shownInTaskbar": false,
+      "focused": true,
+      "resizable": false,
+      "transparent": true,
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "powershell",
+            "argsRegex": "^-NoProfile -File C:\\\\Users\\\\GaryYendell\\\\\\.glzr\\\\zebar\\\\gdy\\\\bluetooth\\.ps1 (status|on|off)$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^ms-settings:bluetooth$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-8px",
+          "offsetY": "30px",
+          "width": "400px",
+          "height": "400px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "display-panel",
+      "htmlPath": "./display.html",
+      "includeFiles": [
+        "*.html",
+        "*.css",
+        "*.js"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "zOrder": "top_most",
+      "shownInTaskbar": false,
+      "focused": true,
+      "resizable": false,
+      "transparent": true,
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "powershell",
+            "argsRegex": "^-NoProfile -File C:\\\\Users\\\\GaryYendell\\\\\\.glzr\\\\zebar\\\\gdy\\\\display\\.ps1 (status|brightness \\d{1,3}|nightlight (on|off)|scale \\d+_\\d+_\\d+ \\d{3})$"
+          },
+          {
+            "program": "explorer",
+            "argsRegex": "^ms-settings:display$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-8px",
+          "offsetY": "30px",
+          "width": "400px",
+          "height": "400px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "weather-panel",
+      "htmlPath": "./weather.html",
+      "includeFiles": [
+        "*.html",
+        "*.css",
+        "*.js"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": [
+          {
+            "urlRegex": "api\\.open-meteo\\.com",
+            "duration": 0
+          }
+        ]
+      },
+      "zOrder": "top_most",
+      "shownInTaskbar": false,
+      "focused": true,
+      "resizable": false,
+      "transparent": true,
+      "privileges": {
+        "shellCommands": []
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-8px",
+          "offsetY": "30px",
+          "width": "400px",
+          "height": "400px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "calendar-panel",
+      "htmlPath": "./calendar.html",
+      "includeFiles": [
+        "*.html",
+        "*.css",
+        "*.js"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "zOrder": "top_most",
+      "shownInTaskbar": false,
+      "focused": true,
+      "resizable": false,
+      "transparent": true,
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "explorer",
+            "argsRegex": "^ms-settings:dateandtime$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-8px",
+          "offsetY": "30px",
+          "width": "400px",
+          "height": "400px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "media-panel",
+      "htmlPath": "./media.html",
+      "includeFiles": [
+        "*.html",
+        "*.css",
+        "*.js"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "zOrder": "top_most",
+      "shownInTaskbar": false,
+      "focused": true,
+      "resizable": false,
+      "transparent": true,
+      "privileges": {
+        "shellCommands": [
+          {
+            "program": "powershell",
+            "argsRegex": "^-NoProfile -File C:\\\\Users\\\\GaryYendell\\\\\\.glzr\\\\zebar\\\\gdy\\\\media\\.ps1 (info|seek \\d+)$"
+          }
+        ]
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-8px",
+          "offsetY": "30px",
+          "width": "400px",
+          "height": "400px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    },
+    {
+      "name": "pomodoro-panel",
+      "htmlPath": "./pomodoro.html",
+      "includeFiles": [
+        "*.html",
+        "*.css",
+        "*.js"
+      ],
+      "caching": {
+        "defaultDuration": 604800,
+        "rules": []
+      },
+      "zOrder": "top_most",
+      "shownInTaskbar": false,
+      "focused": true,
+      "resizable": false,
+      "transparent": true,
+      "privileges": {
+        "shellCommands": []
+      },
+      "presets": [
+        {
+          "name": "default",
+          "anchor": "top_right",
+          "offsetX": "-8px",
+          "offsetY": "30px",
+          "width": "400px",
+          "height": "400px",
+          "monitorSelection": {
+            "type": "primary"
+          },
+          "dockToEdge": {
+            "enabled": false,
+            "edge": null,
+            "windowMargin": "0px"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <link rel="stylesheet" type="text/css" href="./panel.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.3.1?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?dev';
+      import * as zebar from 'https://esm.sh/zebar@3.3.1';
+      import { runPs } from './ps.js';
+      import { SettingsButton, Stats, setupPanel, useFitHeight, usePolling } from './panel.js';
+      import { Icon, networkIcon, wifiIcon } from './icons.js';
+
+      setupPanel('network-panel');
+
+      const POLL_MS = 8000;
+      const MAX_OTHER = 6;
+
+      const wifi = args => runPs('wifi', args);
+
+      // Profile names can contain spaces, so pass them as UTF-8 hex.
+      const hex = s => Array.from(new TextEncoder().encode(s), b => b.toString(16).padStart(2, '0')).join('');
+
+      const providers = zebar.createProviderGroup({
+        network: { type: 'network', refreshInterval: 2000 },
+      });
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      const isSecured = auth => auth && !/^(Open|OWE)$/i.test(auth);
+      const rate = m => (m ? `${m.siValue.toFixed(1)} ${m.siUnit}/s` : '—');
+      const total = m => (m ? `${m.siValue.toFixed(1)} ${m.siUnit}` : '—');
+
+      function NetworkRow({ net, busy, onConnect }) {
+        const clickable = net.known && !net.connected && !busy;
+        return (
+          <button
+            className={`row network ${net.connected ? 'selected' : ''} ${net.known ? '' : 'unknown'}`}
+            title={net.known ? `${net.ssid} · ${net.bands.join(', ')}` : `${net.ssid} · not saved`}
+            onClick={() => clickable && onConnect(net.ssid)}
+          >
+            <Icon name={wifiIcon(net.signal)} />
+            <span className="network-name">
+              {net.ssid}
+              {(net.connected || busy) && (
+                <span className="network-sub">{busy ? 'Connecting…' : 'Connected'}</span>
+              )}
+            </span>
+            {isSecured(net.auth) && <Icon name="nf-md-lock" className="lock" />}
+          </button>
+        );
+      }
+
+      function App() {
+        const [network, setNetwork] = useState(providers.outputMap.network);
+        const [status, setStatus] = useState(null);
+        const [busy, setBusy] = useState(null); // SSID being connected, or 'disconnect'
+        const panelRef = useRef(null);
+        useFitHeight(panelRef);
+
+        const { refresh } = usePolling(async () => JSON.parse(await wifi('status')), POLL_MS, setStatus);
+
+        useEffect(() => {
+          providers.onOutput(() => setNetwork(providers.outputMap.network));
+        }, []);
+
+        function run(label, args) {
+          if (busy) return;
+          setBusy(label);
+          wifi(args)
+            .catch(err => console.error(err))
+            // Give Windows a moment to associate before re-reading.
+            .then(() => new Promise(r => setTimeout(r, 1500)))
+            .then(refresh)
+            .finally(() => setBusy(null));
+        }
+
+        const iface = status?.interface;
+        const connected = iface?.state === 'connected';
+        const networks = status?.networks ?? [];
+        const known = networks.filter(n => n.known);
+        const other = networks.filter(n => !n.known).slice(0, MAX_OTHER);
+
+        function toggle() {
+          if (connected) return run('disconnect', 'disconnect');
+          const best = known.find(n => !n.connected);
+          if (best) run(best.ssid, `connect ${hex(best.ssid)}`);
+        }
+
+        const gateway = network?.defaultGateway;
+        const active = network?.defaultInterface;
+        // Ethernet, VPN etc. is the active connection; Wi-Fi drops to a row.
+        const wired = active && active.type !== 'wifi';
+        // Addresses come in CIDR form (a.b.c.d/prefix); show just the address.
+        const ip = active?.ipv4Addresses?.[0]?.split('/')[0];
+        const trafficRows = [
+          ['Receiving', rate(network?.traffic?.received)],
+          ['Sending', rate(network?.traffic?.transmitted)],
+          ['Downloaded', total(network?.traffic?.totalReceived)],
+          ['Uploaded', total(network?.traffic?.totalTransmitted)],
+          ['IP address', ip],
+          ['Gateway', gateway?.ipv4Addresses?.[0]],
+        ];
+
+        const wifiToggle = status && (
+          <button
+            className={`toggle ${connected ? 'on' : ''}`}
+            title={connected ? 'Disconnect' : 'Connect to strongest saved network'}
+            onClick={toggle}
+          />
+        );
+
+        return (
+          <div className="panel" ref={panelRef}>
+            {wired ? (
+              <>
+                <div className="panel-header">
+                  <Icon name={networkIcon(network)} />
+                  <div className="panel-title">
+                    <h1>{active.type === 'ethernet' ? 'Ethernet' : active.friendlyName ?? active.name}</h1>
+                    <div className="panel-subtitle">{active.description ?? active.friendlyName ?? active.name}</div>
+                  </div>
+                  <SettingsButton page="network" title="Network & internet settings" />
+                </div>
+
+                <div className="section">
+                  <Stats two rows={[...trafficRows, ['MAC', active.macAddress]]} />
+                </div>
+
+                <div className="section setting">
+                  <Icon name={wifiIcon(connected ? iface.signal : null)} />
+                  <span className="network-name">
+                    Wi-Fi
+                    <span className="network-sub">
+                      {!status ? 'Scanning…' : connected ? iface.ssid : iface?.state ?? 'No adapter'}
+                    </span>
+                  </span>
+                  {wifiToggle}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="panel-header">
+                  <Icon name={networkIcon(network)} />
+                  <div className="panel-title">
+                    <h1>{connected ? iface.ssid : 'Wi-Fi'}</h1>
+                    <div className="panel-subtitle">
+                      {!status ? 'Scanning…' : connected ? `${iface.band} · ${iface.auth}` : iface?.state ?? 'No adapter'}
+                    </div>
+                  </div>
+                  <SettingsButton page="network" title="Network & internet settings" />
+                  {wifiToggle}
+                </div>
+
+                {connected && (
+                  <div className="section">
+                    <Stats two
+                      rows={[
+                        ['Signal', `${iface.signal}%`],
+                        ['Channel', iface.channel],
+                        ...trafficRows,
+                        ['Link', `${iface.rxMbps}/${iface.txMbps} Mb`],
+                        ['Radio', iface.radio],
+                      ]}
+                    />
+                  </div>
+                )}
+              </>
+            )}
+
+            {known.length > 0 && (
+              <div className="section">
+                <div className="section-head">
+                  <span>Known networks</span>
+                </div>
+                {known.map(n => (
+                  <NetworkRow
+                    key={n.ssid}
+                    net={n}
+                    busy={busy === n.ssid}
+                    onConnect={ssid => run(ssid, `connect ${hex(ssid)}`)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {other.length > 0 && (
+              <div className="section">
+                <div className="section-head">
+                  <span>Other networks</span>
+                </div>
+                {other.map(n => (
+                  <NetworkRow key={n.ssid} net={n} />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <link rel="stylesheet" type="text/css" href="./panel.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.3.1?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?dev';
+      import { runPs, runPsJson } from './ps.js';
+      import { SettingsButton, setupPanel, useFitHeight } from './panel.js';
+      import { Icon, DISPLAY_ICON } from './icons.js';
+
+      setupPanel('display-panel');
+
+      const display = args => runPs('display', args);
+      const getStatus = () => runPsJson('display', 'status');
+
+      // Runs at most one command at a time and drops all but the latest
+      // queued value, so dragging the brightness slider stays responsive.
+      function latestOnly(run) {
+        let busy = false;
+        let pending = null;
+        const next = async () => {
+          busy = true;
+          while (pending !== null) {
+            const value = pending;
+            pending = null;
+            await run(value).catch(err => console.error(err));
+          }
+          busy = false;
+        };
+        return value => {
+          pending = value;
+          if (!busy) next();
+        };
+      }
+
+      const setBrightness = latestOnly(v => display(`brightness ${v}`));
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      // Range over arbitrary steps (by index). onChange fires while dragging;
+      // onCommit on release, for settings that are slow or disruptive to
+      // apply repeatedly.
+      function StepSlider({ steps, value, onChange, onCommit }) {
+        const [dragging, setDragging] = useState(null);
+        const startValue = useRef(null); // value before this drag
+        const index = dragging ?? Math.max(0, steps.indexOf(value));
+        const pct = steps.length > 1 ? (index / (steps.length - 1)) * 100 : 0;
+        const commit = () => {
+          if (dragging !== null && steps[dragging] !== startValue.current) onCommit?.(steps[dragging]);
+          startValue.current = null;
+          setDragging(null);
+        };
+        return (
+          <input
+            type="range"
+            min="0"
+            max={steps.length - 1}
+            className="slider"
+            style={{ '--pct': `${pct}%` }}
+            value={index}
+            onChange={e => {
+              const i = Number(e.target.value);
+              if (startValue.current === null) startValue.current = value;
+              setDragging(i);
+              onChange?.(steps[i]);
+            }}
+            onPointerUp={commit}
+            onKeyUp={commit}
+          />
+        );
+      }
+
+      const range = (from, to, step) =>
+        Array.from({ length: Math.floor((to - from) / step) + 1 }, (_, i) => from + i * step);
+      const BRIGHTNESS_STEPS = range(0, 100, 1);
+
+      function App() {
+        const [status, setStatus] = useState(null);
+        const [brightness, setBrightnessShown] = useState(null);
+        const panelRef = useRef(null);
+        useFitHeight(panelRef);
+
+        const refresh = () =>
+          getStatus()
+            .then(s => {
+              setStatus(s);
+              setBrightnessShown(s.brightness);
+            })
+            .catch(err => console.error(err));
+
+        useEffect(() => {
+          refresh();
+        }, []);
+
+        const run = args => display(args).then(refresh).catch(err => console.error(err));
+
+        if (!status) {
+          return (
+            <div className="panel" ref={panelRef}>
+              <div className="panel-header">
+                <Icon name={DISPLAY_ICON} />
+                <div className="panel-title">
+                  <h1>Display</h1>
+                  <div className="panel-subtitle">Loading…</div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div className="panel" ref={panelRef}>
+            <div className="panel-header">
+              <Icon name={DISPLAY_ICON} />
+              <div className="panel-title">
+                <h1>Display</h1>
+                <div className="panel-subtitle">{status.monitors.map(m => m.name).join(' · ')}</div>
+              </div>
+              <SettingsButton page="display" title="Display settings" />
+            </div>
+
+            <div className="section setting">
+              <Icon name="nf-md-weather_night" />
+              <span>Night light</span>
+              <button
+                className={`toggle ${status.nightLight ? 'on' : ''}`}
+                title={status.nightLight ? 'Turn night light off' : 'Turn night light on'}
+                onClick={() => {
+                  setStatus({ ...status, nightLight: !status.nightLight });
+                  run(`nightlight ${status.nightLight ? 'off' : 'on'}`);
+                }}
+              />
+            </div>
+
+            {brightness !== null && (
+              <div className="section">
+                <div className="section-head">
+                  <span>Brightness</span>
+                  <span>{brightness}%</span>
+                </div>
+                <StepSlider
+                  steps={BRIGHTNESS_STEPS}
+                  value={brightness}
+                  onChange={v => {
+                    setBrightnessShown(v);
+                    setBrightness(v);
+                  }}
+                />
+              </div>
+            )}
+
+            {status.monitors.map(m => (
+              <div className="section" key={m.key}>
+                <div className="section-head">
+                  <span>Scale · {m.name}</span>
+                  <span>{m.scale}%</span>
+                </div>
+                <StepSlider
+                  steps={m.scales}
+                  value={m.scale}
+                  onChange={v =>
+                    setStatus(s => ({
+                      ...s,
+                      monitors: s.monitors.map(x => (x.key === m.key ? { ...x, scale: v } : x)),
+                    }))
+                  }
+                  onCommit={v => run(`scale ${m.key} ${v}`)}
+                />
+              </div>
+            ))}
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>

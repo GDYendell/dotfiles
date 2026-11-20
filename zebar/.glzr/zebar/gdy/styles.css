@@ -1,0 +1,260 @@
+/* Nerd Font icon classes (nf-*). Cheatsheet: https://www.nerdfonts.com/cheat-sheet */
+@import 'https://www.nerdfonts.com/assets/css/webfont.css';
+
+/* Dracula */
+:root {
+  --bg: #282a36;
+  --fg: #f8f8f2;
+  --muted: #6272a4;
+  --accent: #bd93f9;
+  --alert: #ff5555;
+
+  --font: 'Garosevka', 'JetBrainsMono Nerd Font', 'JetBrains Mono', monospace;
+  --text-size: 11px;
+  --icon-size: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: var(--text-size);
+  overflow: hidden;
+  user-select: none;
+  cursor: default;
+}
+
+button {
+  all: unset;
+  box-sizing: border-box; /* `all: unset` resets it to content-box */
+  cursor: pointer;
+}
+
+/* The icon webfont's ascent/descent differ from the text font's, so its
+   glyphs sit high when flex-centred against text. Nudge them down
+   (em, so bigger panel icons move proportionally). */
+i.nf {
+  font-size: var(--icon-size);
+  position: relative;
+  top: 0.08em;
+}
+
+.app {
+  display: grid;
+  /* minmax(0, ...) keeps the side columns equal even when their content is
+     wide, so the centre column (the date) stays exactly centred. */
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  column-gap: 24px; /* minimum gap between the sides and the centre */
+  align-items: center;
+  height: 100%;
+  padding: 0 12px;
+}
+
+.left,
+.center,
+.right {
+  display: flex;
+  align-items: center;
+}
+
+.left {
+  gap: 14px;
+  min-width: 0;
+}
+
+.window-title {
+  color: var(--muted);
+  flex: 0 1 auto; /* shrinks to whatever room is left */
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.window-app {
+  color: var(--fg);
+  margin-right: 8px;
+}
+
+.center {
+  /* Spacer | date | weather. Both 1fr cells size to the weather, so the
+     date is centred within the centre column. */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  column-gap: 14px;
+}
+
+.right {
+  justify-content: flex-end;
+  gap: 18px;
+  min-width: 0;
+}
+
+.right > * {
+  flex: none;
+}
+
+.workspaces {
+  display: flex;
+  gap: 10px;
+}
+
+.workspace {
+  color: var(--muted);
+  min-width: 10px;
+  text-align: center;
+}
+
+.workspace.displayed {
+  color: var(--fg);
+}
+
+.workspace.focused {
+  color: var(--accent);
+}
+
+.workspace:hover {
+  color: var(--fg);
+}
+
+.tag {
+  color: var(--accent);
+}
+
+.weather {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.module {
+  display: flex;
+  align-items: center;
+  color: var(--fg);
+}
+
+button.module:hover {
+  color: var(--accent);
+}
+
+.module.alert {
+  color: var(--alert);
+}
+
+/* Media: right column, just before the status icons. */
+.media {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.media > * {
+  flex: none;
+}
+
+/* Only the track text shrinks. */
+.media > .media-track {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.media-track {
+  gap: 8px;
+}
+
+.media-track.paused {
+  color: var(--muted);
+}
+
+/* Animated equaliser shown while playing. */
+.eq {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--eq-px, 2px); /* whole device pixels; set in bar.html */
+  height: 10px;
+  flex: none;
+}
+
+.eq > i {
+  width: var(--eq-px, 2px);
+  height: 100%;
+  background: var(--accent);
+  /* Animates height in whole-pixel steps rather than a scale transform,
+     which left smeared pixels on the transparent window. */
+  animation: eq 0.9s steps(4, jump-none) infinite alternate;
+}
+
+.eq > i:nth-child(2) { animation-duration: 0.7s; animation-delay: -0.3s; }
+.eq > i:nth-child(3) { animation-duration: 1.1s; animation-delay: -0.6s; }
+.eq > i:nth-child(4) { animation-duration: 0.8s; animation-delay: -0.15s; }
+
+@keyframes eq {
+  from { height: 2px; }
+  to { height: 10px; }
+}
+
+/* Pomodoro: left of the date, right-aligned against it. */
+.pomo-group {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pomo {
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pomo.running,
+.pomo.done {
+  color: var(--accent);
+}
+
+/* Weather: after the date in the centre column. */
+.weather-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Centred dot between bar items. */
+.sep {
+  color: var(--muted);
+}
+
+.media-track > .media-text {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Icon whose panel is open: short underline, as in Omarchy. */
+.module.active {
+  position: relative;
+}
+
+.module.active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 14px;
+  height: 2px;
+  transform: translateX(-50%);
+  background: var(--accent);
+}

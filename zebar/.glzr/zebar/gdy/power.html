@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <link rel="stylesheet" type="text/css" href="./panel.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.3.1?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?dev';
+      import * as zebar from 'https://esm.sh/zebar@3.3.1';
+      import { runPs } from './ps.js';
+      import { isBatteryLow } from './config.js';
+      import { SettingsButton, Stats, setupPanel, useFitHeight } from './panel.js';
+      import { Icon, batteryIcon } from './icons.js';
+
+      setupPanel('power-panel');
+
+      // Mode names must match the argsRegex in zpack.json.
+      const MODES = [
+        ['efficiency', 'Efficiency'],
+        ['balanced', 'Balanced'],
+        ['performance', 'Performance'],
+      ];
+
+      // Runs power-mode.ps1 and returns the resulting mode name.
+      const powerMode = args => runPs('power-mode', args);
+
+      const providers = zebar.createProviderGroup({ battery: { type: 'battery' } });
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      function duration(ms) {
+        const m = Math.round(ms / 60000);
+        return `${Math.floor(m / 60)}h ${m % 60}m`;
+      }
+
+      function status(bat) {
+        if (bat.state === 'full') return 'Full';
+        if (bat.isCharging) return bat.timeTillFull ? `Charging · full in ${duration(bat.timeTillFull)}` : 'Charging';
+        return bat.timeTillEmpty ? `On battery · ${duration(bat.timeTillEmpty)} left` : 'On battery';
+      }
+
+      function App() {
+        const [battery, setBattery] = useState(providers.outputMap.battery);
+        const [mode, setMode] = useState(null);
+        const [pending, setPending] = useState(null);
+        const panelRef = useRef(null);
+        useFitHeight(panelRef);
+
+        useEffect(() => {
+          providers.onOutput(() => setBattery(providers.outputMap.battery));
+          powerMode('get').then(setMode).catch(err => console.error(err));
+        }, []);
+
+        function choose(next) {
+          if (next === mode || pending) return;
+          setPending(next);
+          powerMode(`set ${next}`)
+            .then(setMode)
+            .catch(err => console.error(err))
+            .finally(() => setPending(null));
+        }
+
+        if (!battery) return null;
+        const low = isBatteryLow(battery);
+
+        return (
+          <div className="panel" ref={panelRef}>
+            <div className="panel-header">
+              <Icon name={batteryIcon(battery)} />
+              <div className="panel-title">
+                <h1>Power</h1>
+                <div className="panel-subtitle">{status(battery)}</div>
+              </div>
+              <SettingsButton page="powersleep" title="Power settings" />
+            </div>
+
+            <div className="section">
+              <div className="section-head">
+                <span>Battery</span>
+                <span className={low ? 'alert' : ''}>{Math.round(battery.chargePercent)}%</span>
+              </div>
+              <div className={`meter ${low ? 'low' : ''}`}>
+                <div style={{ width: `${battery.chargePercent}%` }} />
+              </div>
+              <Stats
+                rows={[
+                  // Not every battery reports these; Stats shows null as '—'.
+                  ['Power draw', battery.powerConsumption != null ? `${battery.powerConsumption.toFixed(1)} W` : null],
+                  ['Health', battery.healthPercent != null ? `${Math.round(battery.healthPercent)}%` : null],
+                  ['Cycles', battery.cycleCount],
+                  ...(battery.voltage ? [['Voltage', `${battery.voltage.toFixed(2)} V`]] : []),
+                ]}
+              />
+            </div>
+
+            <div className="section">
+              <div className="section-head">
+                <span>Power mode</span>
+                {pending && <span>switching…</span>}
+              </div>
+              <div className="choices">
+                {MODES.map(([id, label]) => (
+                  <button
+                    key={id}
+                    className={`choice ${(pending ?? mode) === id ? 'selected' : ''}`}
+                    onClick={() => choose(id)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>

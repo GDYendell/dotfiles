@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <link rel="stylesheet" type="text/css" href="./panel.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, { useState, useRef } from 'https://esm.sh/react@18.3.1?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?dev';
+      import { runPsJson } from './ps.js';
+      import { SettingsButton, setupPanel, useFitHeight, usePolling } from './panel.js';
+      import { Icon, BLUETOOTH_ICON } from './icons.js';
+
+      setupPanel('bluetooth-panel');
+
+      const POLL_MS = 15000;
+
+      const bluetooth = action => runPsJson('bluetooth', action);
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      const CLASS_ICONS = {
+        AudioVideo: 'nf-md-headphones',
+        Phone: 'nf-md-cellphone',
+        Computer: 'nf-md-laptop',
+        Peripheral: 'nf-md-keyboard_outline',
+        Wearable: 'nf-md-watch',
+      };
+
+      function App() {
+        const [status, setStatus] = useState(null);
+        const [busy, setBusy] = useState(false);
+        const [error, setError] = useState(null);
+        const panelRef = useRef(null);
+        useFitHeight(panelRef);
+
+        const poll = usePolling(
+          () => bluetooth('status'),
+          POLL_MS,
+          s => {
+            setStatus(s);
+            setError(null);
+          },
+          err => {
+            console.error(err);
+            setError('Unavailable');
+          },
+        );
+
+        const on = status?.radio === 'On';
+        const devices = status?.devices ?? [];
+        const connected = devices.filter(d => d.connected).length;
+
+        function toggle() {
+          if (busy || !status?.radio) return;
+          setBusy(true);
+          poll.track(bluetooth(on ? 'off' : 'on')).finally(() => setBusy(false));
+        }
+
+        let subtitle = error ?? 'Checking…';
+        if (status && !status.radio) subtitle = 'No adapter';
+        else if (busy) subtitle = on ? 'Turning off…' : 'Turning on…';
+        else if (status && !on) subtitle = 'Off';
+        else if (status) subtitle = connected ? `${connected} connected` : 'On';
+
+        return (
+          <div className="panel" ref={panelRef}>
+            <div className="panel-header">
+              <Icon name={BLUETOOTH_ICON} />
+              <div className="panel-title">
+                <h1>Bluetooth</h1>
+                <div className="panel-subtitle">{subtitle}</div>
+              </div>
+              <SettingsButton page="bluetooth" title="Bluetooth settings" />
+              {status?.radio && (
+                <button
+                  className={`toggle ${on ? 'on' : ''}`}
+                  title={on ? 'Turn off' : 'Turn on'}
+                  onClick={toggle}
+                />
+              )}
+            </div>
+
+            {on && (
+              <div className="section">
+                <div className="section-head">
+                  <span>Paired devices</span>
+                </div>
+                {devices.length === 0 && <div className="row unknown">None</div>}
+                {devices.map(d => (
+                  <div key={d.name} className={`row ${d.connected ? 'selected' : 'unknown'}`} title={d.name}>
+                    <Icon name={CLASS_ICONS[d.class] ?? 'nf-md-bluetooth'} />
+                    <span className="network-name">
+                      {d.name}
+                      {d.connected && <span className="network-sub">Connected</span>}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.3.1?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?dev';
+      import * as zebar from 'https://esm.sh/zebar@3.3.1';
+      import { currentMonitor } from 'https://esm.sh/@tauri-apps/api@2.12.5/window';
+      import {
+        Icon, DISPLAY_ICON, BLUETOOTH_ICON, SYSTEM_ICON,
+        networkIcon, volumeIcon, batteryIcon, weatherIcon,
+      } from './icons.js';
+      import {
+        POMODORO_ICON, complete, formatMs, initialState, reduce, remainingMs,
+      } from './pomodoro.js';
+      import { LOCATION } from './location.js';
+      import {
+        CPU_ALERT, HISTORY_LENGTH, MEMORY_ALERT, PANEL_TOP, PANEL_WIDTH, SYSTEM_REFRESH_MS, isBatteryLow,
+      } from './config.js';
+
+      const POMODORO_KEY = 'gdy-pomodoro';
+      // A timer that ran out longer ago than this (e.g. overnight while the
+      // bar was closed) finishes silently.
+      const BELL_GRACE_MS = 10 * 60000;
+
+      // Panels open as separate widgets just below the bar. GlazeWM ignores
+      // zebar windows, so they float. Bar height + GlazeWM top gap.
+      const POMODORO_PANEL_HEIGHT = 300; // initial guess; the panel fits itself
+
+      // Panels report open/closed here so the bar can underline the active
+      // icon and treat a second click on it as "close".
+      const panelChannel = new BroadcastChannel('gdy-panels');
+
+      // Zebar scales placement px by the monitor's scale factor, but the
+      // webview's own scale (devicePixelRatio) can differ from it, so
+      // convert CSS px into Zebar px via physical pixels.
+      async function monitorInfo() {
+        try {
+          const monitor = await currentMonitor();
+          if (monitor?.name) {
+            return {
+              selection: { type: 'name', match: monitor.name },
+              toZebarPx: css => (css * window.devicePixelRatio) / monitor.scaleFactor,
+            };
+          }
+        } catch (err) {
+          console.error(err);
+        }
+        return { selection: { type: 'primary' }, toZebarPx: css => css };
+      }
+
+      // Opens a panel widget centred under the clicked icon, kept on screen.
+      async function openPanel(widgetName, anchorEl, height) {
+        const rect = anchorEl.getBoundingClientRect();
+        const centre = rect.left + rect.width / 2;
+        const left = Math.min(Math.max(centre - PANEL_WIDTH / 2, 4), window.innerWidth - PANEL_WIDTH - 4);
+        const { selection, toZebarPx } = await monitorInfo();
+        const px = css => `${Math.round(toZebarPx(css))}px`;
+        await zebar.startWidget(widgetName, {
+          anchor: 'top_left',
+          offsetX: px(left),
+          offsetY: px(PANEL_TOP),
+          width: px(PANEL_WIDTH),
+          height: px(height),
+          monitorSelection: selection,
+          dockToEdge: { enabled: false, edge: null, windowMargin: '0px' },
+        });
+      }
+
+      const PING_TIMEOUT_MS = 300;
+
+      function usePanels() {
+        const [open, setOpen] = useState(null);
+        const openRef = useRef(null);
+        const openInstance = useRef(null);
+        const lastClosed = useRef({ panel: null, at: 0 });
+        const starting = useRef(new Map()); // panel -> guard timeout
+
+        function setOpenPanel(update) {
+          setOpen(current => (openRef.current = typeof update === 'function' ? update(current) : update));
+        }
+
+        useEffect(() => {
+          const onMessage = ({ data }) => {
+            if (data.type === 'history-request') {
+              panelChannel.postMessage({ type: 'history', ...history });
+            }
+            if (data.type === 'open') {
+              openInstance.current = data.instance;
+              clearTimeout(starting.current.get(data.panel));
+              starting.current.delete(data.panel);
+              setOpenPanel(data.panel);
+            }
+            // Ignore a panel closed because a newer one replaced it.
+            if (data.type === 'closed' && data.instance === openInstance.current) {
+              lastClosed.current = { panel: data.panel, at: Date.now() };
+              setOpenPanel(current => (current === data.panel ? null : current));
+            }
+          };
+          panelChannel.addEventListener('message', onMessage);
+          return () => panelChannel.removeEventListener('message', onMessage);
+        }, []);
+
+        // Guarded until the panel reports 'open' (or 3s pass), since the
+        // window exists well before its page loads.
+        function start(panel, anchorEl, height) {
+          if (starting.current.has(panel)) return;
+          const release = () => {
+            clearTimeout(starting.current.get(panel));
+            starting.current.delete(panel);
+          };
+          starting.current.set(panel, setTimeout(release, 3000));
+          openPanel(panel, anchorEl, height).catch(err => {
+            console.error(err);
+            release();
+          });
+        }
+
+        // Clicking the bar blurs (and so closes) an open panel before the
+        // click lands, so a click just after its own panel closed is a toggle.
+        function toggle(panel, anchorEl, height) {
+          const { panel: closed, at } = lastClosed.current;
+          if (closed === panel && Date.now() - at < 400) return;
+          if (openRef.current !== panel) return start(panel, anchorEl, height);
+          // Marked open but not closed by this click: it may have died without
+          // saying so. A live panel answers the ping with 'open'.
+          setOpenPanel(null);
+          panelChannel.postMessage({ type: 'ping', panel });
+          setTimeout(() => openRef.current !== panel && start(panel, anchorEl, height), PING_TIMEOUT_MS);
+        }
+
+        return { open, toggle };
+      }
+
+      function loadPomodoro() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(POMODORO_KEY));
+          if (saved?.minutes) return saved;
+        } catch (err) {
+          console.error(err);
+        }
+        return initialState();
+      }
+
+      // The bar owns the pomodoro timer, since panels close. It counts down
+      // to a timestamp (no drift, survives sleep), persists across reloads,
+      // and broadcasts every change to the panel.
+      function usePomodoro(onDone) {
+        const [pomo, setPomo] = useState(loadPomodoro);
+        const [now, setNow] = useState(Date.now());
+        const ref = useRef(pomo);
+        const onDoneRef = useRef(onDone);
+        onDoneRef.current = onDone;
+
+        function update(next) {
+          ref.current = next;
+          setPomo(next);
+          try {
+            localStorage.setItem(POMODORO_KEY, JSON.stringify(next));
+          } catch (err) {
+            console.error(err);
+          }
+          panelChannel.postMessage({ type: 'pomo-state', state: next });
+        }
+        const send = cmd => update(reduce(ref.current, cmd, Date.now()));
+
+        useEffect(() => {
+          const onMessage = ({ data }) => {
+            if (data.type === 'pomo-request') panelChannel.postMessage({ type: 'pomo-state', state: ref.current });
+            if (data.type === 'pomo-cmd') send(data);
+          };
+          panelChannel.addEventListener('message', onMessage);
+          return () => panelChannel.removeEventListener('message', onMessage);
+        }, []);
+
+        useEffect(() => {
+          if (!pomo.endAt) return;
+          const tick = () => {
+            const t = Date.now();
+            setNow(t);
+            const { endAt } = ref.current;
+            if (endAt && t >= endAt) {
+              const ended = ref.current.mode;
+              update(complete(ref.current));
+              if (t - endAt < BELL_GRACE_MS) onDoneRef.current(ended);
+            }
+          };
+          tick();
+          const timer = setInterval(tick, 500);
+          return () => clearInterval(timer);
+        }, [pomo.endAt]);
+
+        return { pomo, remaining: remainingMs(pomo, now), send };
+      }
+
+      const providers = zebar.createProviderGroup({
+        glazewm: { type: 'glazewm' },
+        date: { type: 'date', formatting: "HH:mm '·' EEEE dd MMMM" },
+        weather: {
+          type: 'weather',
+          latitude: LOCATION.latitude,
+          longitude: LOCATION.longitude,
+          refreshInterval: 15 * 60 * 1000,
+        },
+        network: { type: 'network' },
+        cpu: { type: 'cpu', refreshInterval: SYSTEM_REFRESH_MS },
+        memory: { type: 'memory', refreshInterval: SYSTEM_REFRESH_MS },
+        audio: { type: 'audio' },
+        battery: { type: 'battery' },
+        media: { type: 'media' },
+      });
+
+      // Recent CPU/memory usage for the system panel's graphs. Sampled on a
+      // fixed timer (onOutput fires for every provider, not per tick) and
+      // broadcast each time, so the bar is the only sampler and an open panel
+      // just shows the latest.
+      const history = { cpu: [], memory: [] };
+      setInterval(() => {
+        const { cpu, memory } = providers.outputMap;
+        if (!cpu || !memory) return;
+        history.cpu = [...history.cpu, cpu.usage].slice(-HISTORY_LENGTH);
+        history.memory = [...history.memory, memory.usage].slice(-HISTORY_LENGTH);
+        panelChannel.postMessage({ type: 'history', ...history });
+      }, SYSTEM_REFRESH_MS);
+
+      // CSS px that land on whole physical pixels, for the media equaliser:
+      // at fractional scales a plain 2px bar rounds to 3 or 4 device pixels
+      // depending on where it starts, so the bars came out uneven.
+      function setDevicePx() {
+        const dpr = window.devicePixelRatio;
+        document.documentElement.style.setProperty('--eq-px', `${Math.max(1, Math.round(2 * dpr)) / dpr}px`);
+      }
+      setDevicePx();
+      window.addEventListener('resize', setDevicePx);
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      // Centred dot between bar items.
+      function Sep() {
+        return <span className="sep">·</span>;
+      }
+
+      // Friendlier names for common process names; others are shown as-is.
+      const APP_NAMES = {
+        msedge: 'Edge',
+        chrome: 'Chrome',
+        firefox: 'Firefox',
+        code: 'VS Code',
+        windowsterminal: 'Terminal',
+        explorer: 'Explorer',
+        'ms-teams': 'Teams',
+        olk: 'Outlook',
+        outlook: 'Outlook',
+        slack: 'Slack',
+        spotify: 'Spotify',
+        obsidian: 'Obsidian',
+        wezterm: 'WezTerm',
+        'wezterm-gui': 'WezTerm',
+      };
+      function appName(process) {
+        if (!process) return '';
+        const base = process.replace(/\.exe$/i, '');
+        return APP_NAMES[base.toLowerCase()] ?? base;
+      }
+
+      function networkTitle(net) {
+        const iface = net.defaultInterface;
+        if (!iface) return 'Disconnected';
+        if (iface.type === 'wifi') {
+          return `${net.defaultGateway?.ssid ?? 'Wi-Fi'} (${net.defaultGateway?.signalStrength ?? '?'}%)`;
+        }
+        return iface.friendlyName ?? iface.name;
+      }
+
+      function batteryTitle(bat) {
+        const pct = `${Math.round(bat.chargePercent)}%`;
+        const fmt = ms => {
+          const m = Math.round(ms / 60000);
+          return `${Math.floor(m / 60)}h ${m % 60}m`;
+        };
+        if (bat.isCharging && bat.timeTillFull) return `${pct}, full in ${fmt(bat.timeTillFull)}`;
+        if (!bat.isCharging && bat.timeTillEmpty) return `${pct}, ${fmt(bat.timeTillEmpty)} left`;
+        return `${pct} (${bat.state})`;
+      }
+
+      // Pomodoro bells, played from the pack folder through Web Audio. The
+      // sound files are kept out of the repo; copy them in on each machine.
+      const BELLS = { work: 'work-end.mp3', break: 'break-end.wav' };
+      const BELL_VOLUME = 0.25;
+      // The context is created (or resumed) on any click in the bar, since
+      // webview autoplay rules can block audio started without a gesture.
+      let audioCtx = null;
+      function getAudioCtx() {
+        audioCtx ??= new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return audioCtx;
+      }
+      window.addEventListener('pointerdown', getAudioCtx);
+
+      const bellBuffers = {};
+      async function ringBell(mode) {
+        try {
+          const ctx = getAudioCtx();
+          bellBuffers[mode] ??= await ctx.decodeAudioData(await (await fetch(BELLS[mode])).arrayBuffer());
+          const src = ctx.createBufferSource();
+          src.buffer = bellBuffers[mode];
+          const gain = ctx.createGain();
+          gain.gain.value = BELL_VOLUME;
+          src.connect(gain).connect(ctx.destination);
+          src.start();
+        } catch (err) {
+          console.error('bell', err);
+        }
+      }
+
+      function App() {
+        const [output, setOutput] = useState(providers.outputMap);
+        const panels = usePanels();
+        const pomoButton = useRef(null);
+        const pomodoro = usePomodoro(ended => {
+          ringBell(ended);
+          if (pomoButton.current) panels.toggle('pomodoro-panel', pomoButton.current, POMODORO_PANEL_HEIGHT);
+        });
+        const { pomo } = pomodoro;
+
+        useEffect(() => {
+          providers.onOutput(() => setOutput(providers.outputMap));
+        }, []);
+
+        const { glazewm, date, weather, network, cpu, memory, audio, battery, media } = output;
+        const track = media?.currentSession;
+        const playback = audio?.defaultPlaybackDevice;
+
+        function onAudioWheel(e) {
+          if (!playback) return;
+          const step = e.deltaY < 0 ? 2 : -2;
+          audio.setVolume(Math.max(0, Math.min(100, playback.volume + step)));
+        }
+
+        return (
+          <div className="app">
+            <div className="left">
+              {glazewm && (
+                <div className="workspaces">
+                  {/* All monitors' workspaces, since the bar is only on the primary. */}
+                  {[...glazewm.allWorkspaces]
+                    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+                    .map(ws => (
+                    <button
+                      key={ws.name}
+                      className={`workspace ${ws.hasFocus ? 'focused' : ''} ${ws.isDisplayed ? 'displayed' : ''}`}
+                      onClick={() => glazewm.runCommand(`focus --workspace ${ws.name}`)}
+                    >
+                      {ws.displayName ?? ws.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {glazewm?.isPaused && (
+                <button className="tag" onClick={() => glazewm.runCommand('wm-toggle-pause')}>
+                  paused
+                </button>
+              )}
+              {glazewm?.bindingModes.map(mode => (
+                <button
+                  key={mode.name}
+                  className="tag"
+                  onClick={() => glazewm.runCommand(`wm-disable-binding-mode --name ${mode.name}`)}
+                >
+                  {mode.displayName ?? mode.name}
+                </button>
+              ))}
+              {/* GlazeWM sends no title-change events, so this refreshes on
+                  focus/layout changes rather than e.g. browser tab switches. */}
+              {glazewm?.focusedContainer?.type === 'window' && <Sep />}
+              {glazewm?.focusedContainer?.type === 'window' && (
+                <span className="window-title" title={glazewm.focusedContainer.title}>
+                  <span className="window-app">{appName(glazewm.focusedContainer.processName)}</span>
+                  {glazewm.focusedContainer.title}
+                </span>
+              )}
+
+            </div>
+
+            {/* Pomodoro, date, weather. The two 1fr cells match widths so the
+                date itself stays exactly centred. */}
+            <div className="center">
+              <div className="pomo-group">
+                <button
+                  ref={pomoButton}
+                  className={`module pomo ${pomo.endAt ? 'running' : 'stopped'} ${pomo.done ? 'done' : ''} ${panels.open === 'pomodoro-panel' ? 'active' : ''}`}
+                  title={`${pomo.mode === 'work' ? 'Work' : 'Break'} · ${pomo.done ? `ready, ${pomo.minutes[pomo.mode]} min` : pomo.endAt ? `${formatMs(pomodoro.remaining)} left` : `${pomo.minutes[pomo.mode]} min`}\nRight-click to ${pomo.endAt ? 'pause' : 'start'}`}
+                  onClick={e => panels.toggle('pomodoro-panel', e.currentTarget, POMODORO_PANEL_HEIGHT)}
+                  onContextMenu={e => {
+                    e.preventDefault();
+                    pomodoro.send({ cmd: 'toggle' });
+                  }}
+                >
+                  <Icon name={POMODORO_ICON} />
+                </button>
+                <Sep />
+              </div>
+              <button
+                className={`clock module ${panels.open === 'calendar-panel' ? 'active' : ''}`}
+                onClick={e => panels.toggle('calendar-panel', e.currentTarget, 300)}
+              >
+                {date?.formatted}
+              </button>
+              {weather ? (
+                <div className="weather-group">
+                  <Sep />
+                  <button
+                    className={`weather module ${panels.open === 'weather-panel' ? 'active' : ''}`}
+                    title={`Wind ${Math.round(weather.windSpeed)} km/h`}
+                    onClick={e => panels.toggle('weather-panel', e.currentTarget, 190)}
+                  >
+                    <Icon name={weatherIcon(weather)} />
+                    {Math.round(weather.celsiusTemp)}°
+                  </button>
+                </div>
+              ) : (
+                <div />
+              )}
+            </div>
+
+            <div className="right">
+              {track && (
+                <div className="media">
+                  <button
+                    className={`module media-track ${track.isPlaying ? 'playing' : 'paused'} ${panels.open === 'media-panel' ? 'active' : ''}`}
+                    title={`${[track.title, track.albumTitle, track.artist].filter(Boolean).join(' · ')}\nRight-click to ${track.isPlaying ? 'pause' : 'play'}`}
+                    onClick={e => panels.toggle('media-panel', e.currentTarget, 220)}
+                    onContextMenu={e => {
+                      e.preventDefault();
+                      media.togglePlayPause();
+                    }}
+                  >
+                    {track.isPlaying && (
+                      <span className="eq" aria-hidden="true">
+                        <i /><i /><i /><i />
+                      </span>
+                    )}
+                    <span className="media-text">{[track.title, track.albumTitle, track.artist].filter(Boolean).join(' · ')}</span>
+                  </button>
+                  <Sep />
+                </div>
+              )}
+
+              <button
+                className={`module ${panels.open === 'display-panel' ? 'active' : ''}`}
+                title="Display"
+                onClick={e => panels.toggle('display-panel', e.currentTarget, 330)}
+              >
+                <Icon name={DISPLAY_ICON} />
+              </button>
+
+              <button
+                className={`module ${panels.open === 'bluetooth-panel' ? 'active' : ''}`}
+                title="Bluetooth"
+                onClick={e => panels.toggle('bluetooth-panel', e.currentTarget, 200)}
+              >
+                <Icon name={BLUETOOTH_ICON} />
+              </button>
+
+              {network && (
+                <button
+                  className={`module ${panels.open === 'network-panel' ? 'active' : ''}`}
+                  title={networkTitle(network)}
+                  onClick={e => panels.toggle('network-panel', e.currentTarget, 480)}
+                >
+                  <Icon name={networkIcon(network)} />
+                </button>
+              )}
+
+              {cpu && memory && (
+                <button
+                  className={`module ${cpu.usage > CPU_ALERT || memory.usage > MEMORY_ALERT ? 'alert' : ''} ${panels.open === 'system-panel' ? 'active' : ''}`}
+                  title={`CPU ${Math.round(cpu.usage)}%  ·  Memory ${Math.round(memory.usage)}%`}
+                  onClick={e => panels.toggle('system-panel', e.currentTarget, 330)}
+                >
+                  <Icon name={SYSTEM_ICON} />
+                </button>
+              )}
+
+              {audio && (
+                <button
+                  className={`module ${panels.open === 'audio-panel' ? 'active' : ''}`}
+                  title={playback ? `${playback.name}: ${playback.isMuted ? 'muted' : `${Math.round(playback.volume)}%`}` : 'No output'}
+                  onClick={e =>
+                    panels.toggle(
+                      'audio-panel',
+                      e.currentTarget,
+                      // Initial guess; the panel resizes itself to fit.
+                      260 + 36 * (audio.playbackDevices.length + audio.recordingDevices.length),
+                    )
+                  }
+                  onContextMenu={e => {
+                    e.preventDefault();
+                    playback && audio.setMute(!playback.isMuted);
+                  }}
+                  onWheel={onAudioWheel}
+                >
+                  <Icon name={volumeIcon(playback)} />
+                </button>
+              )}
+
+              {battery && (
+                <button
+                  className={`module ${isBatteryLow(battery) ? 'alert' : ''} ${panels.open === 'power-panel' ? 'active' : ''}`}
+                  title={batteryTitle(battery)}
+                  onClick={e => panels.toggle('power-panel', e.currentTarget, 300)}
+                >
+                  <Icon name={batteryIcon(battery)} />
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>

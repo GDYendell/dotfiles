@@ -2,14 +2,16 @@ general:
   # Commands to run when the WM has started. This is useful for running a
   # script or launching another application.
   # Example: The below command launches Zebar.
-  startup_commands: []
+  startup_commands: ['shell-exec zebar']
 
   # Commands to run just before the WM is shutdown.
   # Example: The below command kills Zebar.
-  shutdown_commands: []
+  shutdown_commands: ['shell-exec taskkill /IM zebar.exe /F']
 
   # Commands to run after the WM config is reloaded.
-  config_reload_commands: []
+  # Restarts Zebar so bar changes are picked up on alt+shift+r.
+  config_reload_commands:
+    - 'shell-exec powershell -NoProfile -WindowStyle Hidden -Command "Stop-Process -Name zebar -Force -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 500; Start-Process $env:ProgramFiles\glzr.io\Zebar\zebar.exe"'
 
   # Whether to automatically focus windows underneath the cursor.
   focus_follows_cursor: true
@@ -49,7 +51,7 @@ gaps:
 
   # Gap between windows and the screen edge.
   outer_gap:
-    top: "2px"
+    top: "4px"
     right: "2px"
     bottom: "2px"
     left: "2px"

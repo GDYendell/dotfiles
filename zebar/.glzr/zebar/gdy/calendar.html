@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <link rel="stylesheet" type="text/css" href="./panel.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.3.1?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?dev';
+      import { SettingsButton, setupPanel, useFitHeight } from './panel.js';
+      import { Icon } from './icons.js';
+
+      setupPanel('calendar-panel');
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      const WEEKDAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+
+      // ISO 8601 week number: the week containing the year's first Thursday is 1.
+      function isoWeek(date) {
+        const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        const day = d.getUTCDay() || 7;
+        d.setUTCDate(d.getUTCDate() + 4 - day);
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+      }
+
+      const sameDay = (a, b) =>
+        a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+
+      // Weeks (Monday first) covering the month, each as 7 Dates.
+      function monthWeeks(year, month) {
+        const first = new Date(year, month, 1);
+        const start = new Date(year, month, 1 - ((first.getDay() + 6) % 7));
+        const weeks = [];
+        for (let cursor = start; weeks.length === 0 || cursor.getMonth() === month; ) {
+          const week = [];
+          for (let i = 0; i < 7; i++) {
+            week.push(cursor);
+            cursor = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate() + 1);
+          }
+          weeks.push(week);
+        }
+        return weeks;
+      }
+
+      function App() {
+        const [today, setToday] = useState(new Date());
+        const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
+        const panelRef = useRef(null);
+        useFitHeight(panelRef);
+
+        // Keep "today" right if the panel stays open past midnight.
+        useEffect(() => {
+          const timer = setInterval(() => setToday(new Date()), 60000);
+          return () => clearInterval(timer);
+        }, []);
+
+        const step = delta =>
+          setView(({ year, month }) => {
+            const d = new Date(year, month + delta, 1);
+            return { year: d.getFullYear(), month: d.getMonth() };
+          });
+        const goToday = () => setView({ year: today.getFullYear(), month: today.getMonth() });
+        const isCurrentMonth = view.year === today.getFullYear() && view.month === today.getMonth();
+
+        const weeks = monthWeeks(view.year, view.month);
+        const monthLabel = new Date(view.year, view.month, 1).toLocaleDateString('en-GB', {
+          month: 'long',
+          year: 'numeric',
+        });
+
+        return (
+          <div className="panel" ref={panelRef} onWheel={e => step(e.deltaY > 0 ? 1 : -1)}>
+            <div className="panel-header">
+              <Icon name="nf-md-calendar_month" />
+              <div className="panel-title">
+                <h1>{today.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}</h1>
+                <div className="panel-subtitle">
+                  Week {isoWeek(today)} · {today.getFullYear()}
+                </div>
+              </div>
+              <SettingsButton page="dateandtime" title="Date & time settings" />
+            </div>
+
+            <div className="section">
+              <div className="cal-nav">
+                <button className="icon-button" title="Previous month" onClick={() => step(-1)}>
+                  <Icon name="nf-md-chevron_left" />
+                </button>
+                <button
+                  className={`cal-month ${isCurrentMonth ? '' : 'away'}`}
+                  title={isCurrentMonth ? '' : 'Back to today'}
+                  onClick={goToday}
+                >
+                  {monthLabel}
+                </button>
+                <button className="icon-button" title="Next month" onClick={() => step(1)}>
+                  <Icon name="nf-md-chevron_right" />
+                </button>
+              </div>
+
+              <div className="cal-grid">
+                <span className="cal-head cal-week">Wk</span>
+                {WEEKDAYS.map(d => (
+                  <span key={d} className="cal-head">{d}</span>
+                ))}
+                {weeks.map(week => (
+                  <React.Fragment key={week[0].toISOString()}>
+                    <span className="cal-week">{isoWeek(week[0])}</span>
+                    {week.map(day => (
+                      <span
+                        key={day.toISOString()}
+                        className={[
+                          'cal-day',
+                          day.getMonth() !== view.month && 'outside',
+                          day.getDay() % 6 === 0 && 'weekend',
+                          sameDay(day, today) && 'today',
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
+                      >
+                        {day.getDate()}
+                      </span>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>

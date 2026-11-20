@@ -1,0 +1,544 @@
+/* Shared styling for popup panels. Loaded after styles.css. */
+
+:root {
+  --surface: #44475a; /* Dracula current line: selected rows, tracks */
+  --border: var(--accent);
+  --panel-padding: 18px;
+}
+
+body {
+  background: transparent;
+}
+
+.panel {
+  background: var(--bg);
+  border: 2px solid var(--border);
+  padding: var(--panel-padding);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 14px;
+}
+
+.panel-header > i.nf {
+  font-size: 24px;
+}
+
+.panel-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.panel-title h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Small spaced capitals for subtitles, section heads and labels. */
+.panel-subtitle,
+.section-head,
+.cal-head,
+.weather-facts .stat-label,
+.day-name {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.panel-subtitle {
+  margin-top: 2px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.section {
+  border-top: 1px solid var(--surface);
+  padding-top: 14px;
+  margin-top: 4px;
+  padding-bottom: 10px;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row.selected {
+  background: var(--surface);
+}
+
+button.row {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button.row:not(.selected):hover {
+  color: var(--accent);
+}
+
+.panel {
+  width: var(--panel-width); /* PANEL_WIDTH in config.js, set by panel.js */
+}
+
+/* Weather: big current temperature, facts, then daily forecast. */
+.weather-now {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 0 16px;
+}
+
+.weather-temp {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.weather-temp .weather-big-icon {
+  font-size: 34px;
+  align-self: center;
+}
+
+.weather-big {
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.weather-unit {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.weather-side {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.weather-place {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.weather-label {
+  color: var(--muted);
+}
+
+.weather-facts {
+  display: flex;
+  gap: 14px;
+}
+
+.weather-facts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.weather-days {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding-bottom: 0;
+}
+
+.weather-day {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.weather-day i.nf {
+  font-size: 20px;
+}
+
+/* Calendar: month nav and an 8-column grid (ISO week + Mon-Sun). */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.cal-month {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cal-month.away {
+  color: var(--accent);
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  row-gap: 4px;
+  text-align: center;
+}
+
+.cal-head {
+  color: var(--muted);
+  padding-bottom: 4px;
+}
+
+.cal-week {
+  color: var(--muted);
+  font-size: 10px;
+  align-self: center;
+}
+
+.cal-day {
+  padding: 5px 0;
+}
+
+.cal-day.weekend {
+  color: color-mix(in srgb, var(--fg) 70%, var(--muted));
+}
+
+.cal-day.outside {
+  color: var(--surface);
+}
+
+.cal-day.today {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+}
+
+/* Media: art + track text, progress bar, controls. */
+.media-head {
+  display: flex;
+  gap: 14px;
+  padding-bottom: 14px;
+}
+
+.media-art {
+  width: 84px;
+  height: 84px;
+  flex: none;
+  object-fit: cover;
+}
+
+.media-art.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  font-size: 28px;
+}
+
+.media-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.media-title,
+.media-artist,
+.media-album {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.media-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.media-album {
+  color: var(--muted);
+}
+
+/* 14px tall hit area with the 4px track (background) and fill (child)
+   both centred in it. */
+.media-progress {
+  height: 14px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(var(--surface), var(--surface)) center / 100% 4px no-repeat;
+}
+
+.media-progress.seekable {
+  cursor: pointer;
+}
+
+.media-progress > div {
+  height: 4px;
+  background: var(--fg);
+}
+
+.media-times {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.media-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding-top: 6px;
+}
+
+.media-controls .icon-button {
+  color: var(--fg);
+}
+
+.media-controls .play i.nf {
+  font-size: 26px;
+}
+
+/* Wi-Fi network rows. */
+.network-name {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.network-sub {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.row .lock {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.row.unknown {
+  color: var(--muted);
+  cursor: default;
+}
+
+button.row.unknown:hover {
+  color: var(--muted);
+}
+
+.row > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Section holding one labelled on/off setting: icon, label, toggle. */
+.section.setting {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section.setting > span {
+  flex: 1;
+}
+
+/* Square block toggle: block left and comment blue when off, right and
+   purple when on. */
+.toggle {
+  width: 36px;
+  height: 18px;
+  padding: 2px;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.toggle::before {
+  content: '';
+  width: 16px;
+  height: 14px;
+  background: var(--muted);
+}
+
+.toggle.on {
+  justify-content: flex-end;
+}
+
+.toggle.on::before {
+  background: var(--accent);
+}
+
+/* Thin track with a round knob; --pct is set inline. */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  margin: 6px 0 12px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--fg) var(--pct),
+    var(--surface) var(--pct)
+  );
+  outline: none;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--fg);
+}
+
+.slider.muted {
+  opacity: 0.4;
+}
+
+.icon-button {
+  padding: 4px;
+  color: var(--muted);
+}
+
+.icon-button:hover {
+  color: var(--accent);
+}
+
+.icon-button i.nf {
+  font-size: 18px;
+}
+
+.alert {
+  color: var(--alert);
+}
+
+/* Usage history area graph. */
+.graph {
+  display: block;
+  width: 100%;
+  height: 48px;
+  margin-bottom: 12px;
+  background: color-mix(in srgb, var(--surface) 40%, transparent);
+}
+
+.graph-area {
+  fill: color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.graph-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Thick level meter. */
+.meter {
+  height: 8px;
+  margin-bottom: 12px;
+  background: var(--surface);
+}
+
+.meter > div {
+  height: 100%;
+  background: var(--fg);
+}
+
+.meter.low > div {
+  background: var(--alert);
+}
+
+/* Row of outlined choice buttons; selected one filled. */
+.choices {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 8px;
+}
+
+.choice {
+  padding: 7px 0;
+  text-align: center;
+  border: 1px solid var(--surface);
+}
+
+.choice:hover {
+  border-color: var(--muted);
+}
+
+.choice.selected {
+  background: var(--surface);
+  border-color: var(--muted);
+}
+
+/* Two-column label/value grid. */
+.stats {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  row-gap: 4px;
+  column-gap: 16px;
+}
+
+.stats.two {
+  grid-template-columns: auto 1fr auto 1fr;
+}
+
+.stat-label {
+  color: var(--muted);
+}
+
+.stat-value {
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Audio header mute button: white like the bar's volume icon. */
+.icon-button.mute {
+  color: var(--fg);
+}
+
+.icon-button.mute:hover {
+  color: var(--accent);
+}
+
+/* Pomodoro: big remaining time. */
+.pomo-time {
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  padding: 4px 0 18px;
+}
+
+.pomo-time.paused {
+  color: var(--muted);
+}
+
+.pomo-time.done {
+  color: var(--accent);
+}

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <link rel="stylesheet" type="text/css" href="./panel.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.3.1?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?dev';
+      import * as zebar from 'https://esm.sh/zebar@3.3.1';
+      import { Stats, channel, setupPanel, useFitHeight } from './panel.js';
+      import { Icon, SYSTEM_ICON } from './icons.js';
+      import { CPU_ALERT, HISTORY_LENGTH, MEMORY_ALERT, SYSTEM_REFRESH_MS } from './config.js';
+
+      const close = setupPanel('system-panel');
+
+
+      const providers = zebar.createProviderGroup({
+        cpu: { type: 'cpu', refreshInterval: SYSTEM_REFRESH_MS },
+        memory: { type: 'memory', refreshInterval: SYSTEM_REFRESH_MS },
+      });
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      const gb = bytes => `${(bytes / 2 ** 30).toFixed(1)} GB`;
+      const pct = n => `${Math.round(n)}%`;
+
+      // Usage history as an area graph, 0-100%, newest on the right.
+      function Graph({ values }) {
+        const step = 100 / (HISTORY_LENGTH - 1);
+        const offset = HISTORY_LENGTH - values.length;
+        const points = values.map((v, i) => `${(offset + i) * step},${100 - v}`);
+        const area = points.length
+          ? `M${(offset * step).toFixed(2)},100 L${points.join(' L')} L100,100 Z`
+          : '';
+        return (
+          <svg className="graph" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path className="graph-area" d={area} />
+            <polyline className="graph-line" points={points.join(' ')} />
+          </svg>
+        );
+      }
+
+      function App() {
+        const [{ cpu, memory }, setOutput] = useState(providers.outputMap);
+        const [history, setHistory] = useState({ cpu: [], memory: [] });
+        const panelRef = useRef(null);
+        useFitHeight(panelRef);
+
+        useEffect(() => {
+          // The bar samples the history and broadcasts it every refresh; ask
+          // for it now so the graphs aren't empty until the next sample.
+          const onMessage = ({ data }) => {
+            if (data.type === 'history') setHistory({ cpu: data.cpu, memory: data.memory });
+          };
+          channel.addEventListener('message', onMessage);
+          channel.postMessage({ type: 'history-request' });
+
+          providers.onOutput(() => setOutput(providers.outputMap));
+          return () => channel.removeEventListener('message', onMessage);
+        }, []);
+
+        function openTaskManager() {
+          zebar.shellSpawn('taskmgr').catch(err => console.error(err));
+          close();
+        }
+
+        if (!cpu || !memory) return null;
+
+        return (
+          <div className="panel" ref={panelRef}>
+            <div className="panel-header">
+              <Icon name={SYSTEM_ICON} />
+              <div className="panel-title">
+                <h1>System</h1>
+                <div className="panel-subtitle">
+                  {cpu.physicalCoreCount} cores · {cpu.logicalCoreCount} threads
+                </div>
+              </div>
+              <button className="icon-button" title="Task Manager" onClick={openTaskManager}>
+                <Icon name="nf-md-chart_box_outline" />
+              </button>
+            </div>
+
+            <div className="section">
+              <div className="section-head">
+                <span>CPU</span>
+                <span className={cpu.usage > CPU_ALERT ? 'alert' : ''}>{pct(cpu.usage)}</span>
+              </div>
+              <Graph values={history.cpu} />
+              <Stats
+                rows={[
+                  ['Frequency', `${(cpu.frequency / 1000).toFixed(2)} GHz`],
+                  ['Vendor', cpu.vendor],
+                ]}
+              />
+            </div>
+
+            <div className="section">
+              <div className="section-head">
+                <span>Memory</span>
+                <span className={memory.usage > MEMORY_ALERT ? 'alert' : ''}>{pct(memory.usage)}</span>
+              </div>
+              <Graph values={history.memory} />
+              <Stats
+                rows={[
+                  ['Used', `${gb(memory.usedMemory)} / ${gb(memory.totalMemory)}`],
+                  ['Free', gb(memory.freeMemory)],
+                  ['Swap', `${gb(memory.usedSwap)} / ${gb(memory.totalSwap)}`],
+                ]}
+              />
+            </div>
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>

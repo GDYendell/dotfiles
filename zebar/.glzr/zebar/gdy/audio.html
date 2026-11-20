@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+    <link rel="stylesheet" type="text/css" href="./panel.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.3.1?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client?dev';
+      import * as zebar from 'https://esm.sh/zebar@3.3.1';
+      import { runPs } from './ps.js';
+      import { SettingsButton, setupPanel, useFitHeight } from './panel.js';
+      import { Icon, volumeIcon } from './icons.js';
+
+      setupPanel('audio-panel');
+
+
+      function setDefaultDevice(deviceId) {
+        if (!/^\{[0-9a-fA-F.]+\}\.\{[0-9a-fA-F-]+\}$/.test(deviceId)) {
+          console.error('Unexpected device ID', deviceId);
+          return;
+        }
+        runPs('set-audio-default', deviceId).catch(err => console.error(err));
+      }
+
+      const providers = zebar.createProviderGroup({ audio: { type: 'audio' } });
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      // Holds the dragged value locally so provider updates don't make the
+      // knob jump while dragging.
+      function Slider({ value, muted, onChange }) {
+        const [dragging, setDragging] = useState(null);
+        const shown = Math.round(dragging ?? value);
+        return (
+          <input
+            type="range"
+            min="0"
+            max="100"
+            className={`slider ${muted ? 'muted' : ''}`}
+            style={{ '--pct': `${shown}%` }}
+            value={shown}
+            onChange={e => {
+              const v = Number(e.target.value);
+              setDragging(v);
+              onChange(v);
+            }}
+            onPointerUp={() => setDragging(null)}
+          />
+        );
+      }
+
+      function DeviceSection({ title, device, devices, icon, isDefault, setVolume }) {
+        return (
+          <div className="section">
+            <div className="section-head">
+              <span>{title}</span>
+              <span>{device ? (device.isMuted ? 'muted' : `${Math.round(device.volume)}%`) : '—'}</span>
+            </div>
+            {device && (
+              <Slider
+                value={device.volume}
+                muted={device.isMuted}
+                onChange={v => setVolume(v, { deviceId: device.deviceId })}
+              />
+            )}
+            {devices.map(d => (
+              <button
+                key={d.deviceId}
+                className={`row ${isDefault(d) ? 'selected' : ''}`}
+                title={d.name}
+                onClick={() => !isDefault(d) && setDefaultDevice(d.deviceId)}
+              >
+                <Icon name={icon} />
+                <span>{d.name}</span>
+              </button>
+            ))}
+          </div>
+        );
+      }
+
+      function App() {
+        const [audio, setAudio] = useState(providers.outputMap.audio);
+        const panelRef = useRef(null);
+        useFitHeight(panelRef);
+
+        useEffect(() => {
+          providers.onOutput(() => setAudio(providers.outputMap.audio));
+        }, []);
+
+        if (!audio) return null;
+        const out = audio.defaultPlaybackDevice;
+        const mic = audio.defaultRecordingDevice;
+
+        return (
+          <div className="panel" ref={panelRef}>
+            <div className="panel-header">
+              <Icon name={volumeIcon(out)} />
+              <div className="panel-title">
+                <h1>Audio</h1>
+                <div className="panel-subtitle">{out?.name ?? 'No output'}</div>
+              </div>
+              <SettingsButton page="sound" title="Sound settings" />
+              {out && (
+                <button
+                  className="icon-button mute"
+                  title={out.isMuted ? 'Unmute' : 'Mute'}
+                  onClick={() => audio.setMute(!out.isMuted, { deviceId: out.deviceId })}
+                >
+                  <Icon name={volumeIcon(out)} />
+                </button>
+              )}
+              {mic && (
+                <button
+                  className="icon-button mute"
+                  title={mic.isMuted ? 'Unmute microphone' : 'Mute microphone'}
+                  onClick={() => audio.setMute(!mic.isMuted, { deviceId: mic.deviceId })}
+                >
+                  <Icon name={mic.isMuted ? 'nf-md-microphone_off' : 'nf-md-microphone'} />
+                </button>
+              )}
+            </div>
+
+            <DeviceSection
+              title="Output"
+              device={out}
+              devices={audio.playbackDevices}
+              icon="nf-md-speaker"
+              isDefault={d => d.isDefaultPlayback}
+              setVolume={audio.setVolume}
+            />
+
+            <DeviceSection
+              title="Input"
+              device={audio.defaultRecordingDevice}
+              devices={audio.recordingDevices}
+              icon="nf-md-microphone"
+              isDefault={d => d.isDefaultRecording}
+              setVolume={audio.setVolume}
+            />
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>
