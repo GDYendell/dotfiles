@@ -55,5 +55,13 @@ width = 60
 height = 8
 description = "new workspace: shell, claude, lazygit"
 
+[[keys.command]]
+key = "prefix+n"
+type = "popup"
+command = "~/.local/bin/herdr-new-claude.sh"
+width = 60
+height = 4
+description = "restart claude in this pane with a name"
+
 [ui.sound]
 enabled = false
