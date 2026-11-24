@@ -50,6 +50,9 @@ in another terminal from this directory, and stop:
 claude --resume '<parent>' --fork-session -n '<parent>/<slug>' '<brief>'
 ```
 
+This resumes by name, which only matches names set with `/rename` or `-n`. If the session has
+an automatic name, tell the user to `/rename` it first.
+
 Otherwise, in one Bash call, fill in the three values and run:
 
 ```bash
@@ -59,10 +62,15 @@ brief=$(cat <<'EOF'
 <brief>
 EOF
 )
+sid=$(herdr pane get "$HERDR_PANE_ID" | jq -r '.result.pane.agent_session.value // empty')
+[[ -n "$sid" ]] || { echo "no Claude session ID for pane $HERDR_PANE_ID" >&2; exit 1; }
 new=$(herdr pane split "$HERDR_PANE_ID" --direction right --focus | jq -r '.result.pane.pane_id')
-herdr pane run "$new" "$(printf '%q ' claude --resume "$self" --fork-session -n "$self/$slug" "$brief")"
+herdr pane run "$new" "$(printf '%q ' claude --resume "$sid" --fork-session -n "$self/$slug" "$brief")"
 echo "$new"
 ```
+
+Resume by session ID, not name: `--resume <name>` only matches names set with `/rename` or `-n`,
+so an auto-named parent opens the resume picker instead.
 
 `herdr pane run` types its arguments into the new pane's shell joined by spaces, so the command
 must be passed as one string quoted with `printf '%q '`.
