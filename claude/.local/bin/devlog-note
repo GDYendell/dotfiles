@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 # Print context for today's Obsidian daily note, or render a JSON entry from stdin and append it.
 # Never creates the note: it comes from an Obsidian template.
-# Without DEVLOG_DIR (e.g. over SSH), entries are written to an outbox directory instead.
+# Without DEVLOG_DIR (e.g. over SSH), entries are written to an outbox directory instead, and
+# `devlog-note pull <host>` appends them to the matching daily notes here.
 set -euo pipefail
 
 outbox="${DEVLOG_OUTBOX:-$HOME/.devlog/outbox}"
+
+# Daily note path for a date (default today).
+note_for() { echo "$DEVLOG_DIR/$(LC_ALL=C date -d "${1:-today}" +%Y/%m-%b/%Y-%m-%d).md"; }
+
 note=""
-[[ -n ${DEVLOG_DIR:-} ]] && note="$DEVLOG_DIR/$(LC_ALL=C date +%Y/%m-%b/%Y-%m-%d).md"
+[[ -n ${DEVLOG_DIR:-} ]] && note="$(note_for)"
 repo="$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")"
 
 # JSON entry -> Obsidian markdown. Schema:
@@ -60,8 +65,40 @@ case "${1:-context}" in
   render)
     jq -r --arg time "$(date +%H:%M)" --arg repo "$repo" "$render"
     ;;
+  pull)
+    # Append each entry in <host>'s outbox to the daily note for its date, then delete it there.
+    # Entries whose note doesn't exist yet are left on the host.
+    host="${2:?usage: devlog-note pull <host> [remote-outbox]}"
+    remote="${3:-.devlog/outbox}"
+    [[ -n $note ]] || { echo "DEVLOG_DIR not set" >&2; exit 1; }
+
+    # `; true` so an empty outbox succeeds but an ssh failure still stops the pull.
+    files="$(ssh "$host" "ls $remote/*.md 2>/dev/null; true")"
+    [[ -n $files ]] || { echo "Nothing in $host:$remote"; exit 0; }
+
+    tmp="$(mktemp -d)"
+    trap 'rm -rf "$tmp"' EXIT
+    scp -q "$host:$remote/*.md" "$tmp/"
+
+    done=()
+    for f in "$tmp"/*.md; do
+      name="$(basename "$f")"
+      target="$(note_for "${name:0:10}")"
+      if [[ -f $target ]]; then
+        cat "$f" >> "$target"
+        done+=("$name")
+        echo "Appended $name"
+      else
+        echo "Skipped $name: MISSING: $target"
+      fi
+    done
+
+    if (( ${#done[@]} )); then
+      ssh "$host" "cd $remote && rm -f -- $(printf '%q ' "${done[@]}")"
+    fi
+    ;;
   *)
-    echo "usage: devlog-note [context|append|render]" >&2
+    echo "usage: devlog-note [context|append|render|pull <host>]" >&2
     exit 2
     ;;
 esac
